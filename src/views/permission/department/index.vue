@@ -90,7 +90,6 @@ export default {
         {
           id: 1,
           name: '东莞记忆科技总公司',
-          // department: '东莞记忆科技总公司',
           children: [{
                 id: 11,
                 name: '深圳记忆科技分公司',
