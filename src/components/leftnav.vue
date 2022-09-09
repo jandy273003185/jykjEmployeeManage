@@ -76,70 +76,12 @@ export default {
               url: 'department/index',
               menus: null
             },
-          ]
-        },
-        {
-          menuid: 2,
-          icon: 'li-icon-xiangmuguanli',
-          menuname: 'FTP管理',
-          hasThird: null,
-          url: null,
-          menus: [
-            // {
-            //   menuid: 21,
-            //   icon: 'icon-cms-manage',
-            //   menuname: 'FTP列表',
-            //   hasThird: 'N',
-            //   url: 'interface/Interface',
-            //   menus: null
-            // },
             {
-              menuid: 21,
+              menuid: 13,
               icon: 'icon-order-manage',
-              menuname: '分发方管理',
+              menuname: '角色管理',
               hasThird: 'N',
-              url: 'distributor/index',
-              menus: null
-            },
-            {
-              menuid: 22,
-              icon: 'icon-order-manage',
-              menuname: '接收方管理',
-              hasThird: 'N',
-              url: 'recipient/index',
-              menus: null
-            },
-            {
-              menuid: 23,
-              icon: 'icon-order-manage',
-              menuname: '接收邮件管理',
-              hasThird: 'N',
-              url: 'email/index',
-              menus: null
-            },
-            // {
-            //   menuid: 23,
-            //   icon: 'icon-cms-manage',
-            //   menuname: '接口调用规则设置',
-            //   hasThird: 'N',
-            //   url: 'interfaceSet/InterfaceSet',
-            //   menus: null
-            // }
-          ]
-        },
-        {
-          menuid: 3,
-          icon: 'li-icon-xiangmuguanli',
-          menuname: '任务管理',
-          hasThird: null,
-          url: null,
-          menus: [
-            {
-              menuid: 31,
-              icon: 'icon-order-manage',
-              menuname: '任务列表',
-              hasThird: 'N',
-              url: 'task/index',
+              url: 'role/index',
               menus: null
             },
           ]
@@ -154,9 +96,25 @@ export default {
             {
               menuid: 41,
               icon: 'icon-order-manage',
-              menuname: '日志列表',
+              menuname: '登录日志',
               hasThird: 'N',
-              url: 'log/index',
+              url: 'loginLog/index',
+              menus: null
+            },
+            {
+              menuid: 42,
+              icon: 'icon-order-manage',
+              menuname: '操作日志',
+              hasThird: 'N',
+              url: 'operationLog/index',
+              menus: null
+            },
+            {
+              menuid: 43,
+              icon: 'icon-order-manage',
+              menuname: '异常日志',
+              hasThird: 'N',
+              url: 'abnormalLog/index',
               menus: null
             },
           ]

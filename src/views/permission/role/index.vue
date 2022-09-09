@@ -9,21 +9,28 @@
       <el-breadcrumb-item>FTP列表</el-breadcrumb-item>
     </el-breadcrumb> -->
     <!-- 搜索筛选 -->
-    <el-form :inline="true" :model="formInline" class="user-search"> 
+    <el-form :inline="true" :model="formInline" class="user-search">
+      <el-form-item label="名称：">
+        <el-input size="small" v-model="formInline.name" placeholder="输入名称"></el-input>
+      </el-form-item>
       <el-form-item>
+        <el-button size="small" type="primary" icon="el-icon-search" @click="search">搜索</el-button>
         <el-button size="small" type="primary" icon="el-icon-plus" @click="handleEdit()">添加</el-button>
       </el-form-item>
     </el-form>
     <!--列表-->
-    <el-table size="small" :data="listData" row-key="id" default-expand-all :tree-props="{children: 'children', hasChildren: 'hasChildren'}" highlight-current-row v-loading="loading" border element-loading-text="拼命加载中" style="width: 100%;">
+    <el-table size="small" :data="listData" highlight-current-row v-loading="loading" border element-loading-text="拼命加载中" style="width: 100%;">
       <!-- <el-table-column align="center" width="0"></el-table-column> -->
       <!-- type="selection" -->
-      <!-- <el-table-column type="index" label="序号" width="50"></el-table-column> -->
-      <el-table-column prop="name" label="名称" width="600">
+      <el-table-column type="index" label="序号" width="50"></el-table-column>
+      <el-table-column sortable prop="name" label="名称">
       </el-table-column>
-      <el-table-column prop="department" label="上级部门" width="200">
+      <el-table-column sortable prop="name" label="备注">
       </el-table-column>
-      <el-table-column prop="sort" label="排序" width="70">
+      <el-table-column sortable prop="groupName" label="创建时间">
+        <!-- <template slot-scope="scope">
+          <div>{{scope.row.sendTime|timestampToTime}}</div>
+        </template> -->
       </el-table-column>
       <el-table-column align="center" label="操作" min-width="100">
         <template slot-scope="scope">
@@ -35,18 +42,34 @@
     <!-- 分页组件 -->
     <Pagination v-bind:child-msg="pageparm" @callFather="callFather"></Pagination>
     <!-- 编辑界面 -->
-    <el-dialog :title="title" :visible.sync="editFormVisible" width="40%" @click="closeDialog">
-      <el-form label-width="120px" :model="editForm" :rules="rules" ref="editForm">
+    <el-dialog :title="title" :visible.sync="editFormVisible"  class="roll-dialog" width="49%" @click="closeDialog">
+      <el-form inline label-width="80px" :model="editForm" :rules="rules" ref="editForm">
         <el-form-item label="名称" prop="name">
-          <el-input size="small" v-model="editForm.name" auto-complete="off" placeholder="请输入名称"></el-input>
+          <el-input style="width: 520px;" size="small" v-model="editForm.name" auto-complete="off" placeholder="请输入名称"></el-input>
         </el-form-item>
-        <el-form-item label="上级部门" prop="department">
-          <el-input size="small" v-model="editForm.department" auto-complete="off" placeholder="请输入上级部门"></el-input>
+        <el-form-item label="备注" prop="name">
+          <el-input style="width: 520px;" size="small" v-model="editForm.name" auto-complete="off" placeholder="请输入备注"></el-input>
         </el-form-item>
-        <el-form-item label="排序" prop="sort">
-          <el-input type="number" size="small" v-model="editForm.sort" auto-complete="off" placeholder="请输入排序"></el-input>
+        <el-form-item label="菜单授权" prop="name" style="width: 288px;">
+          <el-tree
+            :data="menuList"
+            show-checkbox
+            node-key="id"
+            style="margin-top:8px"
+            :props="defaultProps">
+          </el-tree>
+          <!-- :default-expanded-keys="[2, 3]"
+            :default-checked-keys="[5]" -->
         </el-form-item>
-        
+        <el-form-item label="数据授权" prop="name" style="width: 288px;">
+            <el-tree
+              :data="dataList"
+              show-checkbox
+              node-key="id"
+              style="margin-top:8px"
+              :props="defaultProps">
+            </el-tree>
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button size="small" @click="closeDialog">取消</el-button>
@@ -86,39 +109,100 @@ export default {
         token: localStorage.getItem('logintoken')
       },
       userparm: [], //搜索权限
-      listData: [
-        {
-          id: 1,
-          name: '东莞记忆科技总公司',
-          children: [{
-                id: 11,
-                name: '深圳记忆科技分公司',
-                department: '东莞记忆科技总公司',
-                sort:1,
-                children: [{
-                  id: 111,
-                  name: '技术部',
-                  department: '深圳记忆科技分公司',
-                  sort:11,
-                }, {
-                  id: 112,
-                  name: '业务部',
-                  department: '深圳记忆科技分公司',
-                  sort:12,
-                }]
-              }, {
-                id: 12,
-                name: '广州记忆科技分公司',
-                department: '东莞记忆科技总公司',
-                sort:2,
-            }]
-        }
-      ], //用户数据
+      listData: [], //用户数据
       // 分页参数
       pageparm: {
         currentPage: 1,
         pageSize: 10,
         total: 10
+      },
+      menuList: [{
+          id: 1,
+          label: '权限管理',
+          children: [
+              {
+                id: 4,
+                label: '用户管理',
+                children: [{
+                    id: 9,
+                    label: '查看'
+                  }, {
+                    id: 10,
+                    label: '新增'
+                  }, {
+                    id: 11,
+                    label: '修改'
+                  }, {
+                    id: 12,
+                    label: '删除'
+                  }
+                ]
+              },
+              {
+              id: 5,
+              label: '部门管理',
+              children: [{
+                  id: 9,
+                  label: '查看'
+                }, {
+                  id: 10,
+                  label: '新增'
+                }, {
+                  id: 11,
+                  label: '修改'
+                }, {
+                  id: 12,
+                  label: '删除'
+                }
+              ]
+            }
+          ]
+        }, {
+          id: 2,
+          label: '日志管理',
+          children: [{
+            id: 5,
+            label: '登录日志'
+          }, {
+            id: 6,
+            label: '操作日志'
+          }]
+        }, 
+      ],
+      dataList: [{
+          id: 1,
+          label: '东莞记忆科技总公司',
+          children: [
+              {
+                id: 4,
+                label: '深圳记忆科技分公司',
+                children: [{
+                    id: 9,
+                    label: '技术部'
+                  }, {
+                    id: 10,
+                    label: '业务部'
+                  }, 
+                ]
+              },
+              {
+              id: 5,
+              label: '广州记忆科技分公司',
+              children: [{
+                  id: 9,
+                  label: '技术部'
+                }, {
+                  id: 10,
+                  label: '业务部'
+                },
+              ]
+            }
+          ]
+        }, 
+      ],
+      defaultProps: {
+        children: 'children',
+        label: 'label'
       }
     }
   },
@@ -127,7 +211,7 @@ export default {
     Pagination
   },
   created() {
-    // this.getdata(this.formInline)
+    this.getdata(this.formInline)
   },
   methods: {
     // 获取列表
@@ -244,7 +328,33 @@ export default {
     // 关闭编辑、增加弹出框
     closeDialog() {
       this.editFormVisible = false
-    }
+    },
+    loadNode(node, resolve) {
+        if (node.level === 0) {
+          return resolve([{ name: '权限管理' }]);
+        }
+        if (node.level > 1) return resolve([]);
+
+        setTimeout(() => {
+          const data = [{
+            name: '用户管理',
+            leaf: true, 
+            children: [
+              { 
+                name: '查',
+              }
+            ]
+            }, {
+              name: '部门管理'
+            },
+            {
+              name: '角色管理'
+            }
+        ];
+
+          resolve(data);
+        }, 500);
+      }
   }
 }
 </script>
@@ -255,6 +365,10 @@ export default {
 }
 .userRole {
   width: 100%;
+}
+.roll-dialog>>>.el-dialog__body {
+  overflow-y: auto !important;
+  height: calc(100vh - 320px) !important;
 }
 </style>
 

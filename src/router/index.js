@@ -10,14 +10,15 @@ import index from '@/views/index';
  */
 // 登录列表
 import masterData from '@/views/masterData/masterData';
-import FTPbak from '@/views/FTPbak/index';
 import distributor from '@/views/distributor/index';
 import recipient from '@/views/recipient/index';
 import email from '@/views/email/index';
 import userManage from '@/views/permission/userManage/index';
 import department from '@/views/permission/department/index';
-import task from '@/views/task/index';
-import log from '@/views/log/index';
+import role from '@/views/permission/role/index';
+import loginLog from '@/views/log/loginLog/index';
+import operationLog from '@/views/log/operationLog/index';
+import abnormalLog from '@/views/log/abnormalLog/index';
 import monitorDir from '@/views/monitorDir/index';
 import sysConfig from '@/views/sysConfig/index';
 // 接口列表
@@ -139,16 +140,30 @@ export default new Router({
                     requireAuth: true
                 }
             }, {
-                path: '/task/index',
-                name: '任务管理',
-                component: task,
+                path: '/role/index',
+                name: '角色管理',
+                component: role,
                 meta: {
                     requireAuth: true
                 }
-            }, {
-                path: '/log/index',
-                name: '日志管理',
-                component: log,
+            },  {
+                path: '/loginLog/index',
+                name: '登录日志',
+                component: loginLog,
+                meta: {
+                    requireAuth: true
+                }
+            },  {
+                path: '/operationLog/index',
+                name: '操作日志',
+                component: operationLog,
+                meta: {
+                    requireAuth: true
+                } 
+            },  {
+                path: '/abnormalLog/index',
+                name: '异常日志',
+                component: abnormalLog,
                 meta: {
                     requireAuth: true
                 }
