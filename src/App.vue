@@ -1,30 +1,34 @@
 <template>
-  <div id="app">
-    <router-view/>
-  </div>
+  <transition name="el-fade-in-linear">
+    <router-view />
+  </transition>
 </template>
 
-<script>
-export default {
-    name: "App"
-};
-</script>
-
-<style> 
-html,
-body {
-    width: 100%;
-    height: 100%;
-    box-sizing: border-box;
-    padding: 0px;
-    margin: 0px;
-}
-#app {
-    font-family: "Avenir", Helvetica, Arial, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    color: #2c3e50;
-    widows: 100%;
-    height: 100%;
-}
+<style>
+  .el-table th.gutter{
+    display: table-cell!important;
+  }
 </style>
+<script>
+import Cookies from 'js-cookie'
+import { messages } from '@/i18n'
+export default {
+  watch: {
+    '$i18n.locale': 'i18nHandle'
+  },
+  created () {
+    this.i18nHandle(this.$i18n.locale)
+  },
+  methods: {
+    i18nHandle (val, oldVal) {
+      Cookies.set('language', val)
+      document.querySelector('html').setAttribute('lang', val)
+      document.title = messages[val].brand.lg
+      // 非登录页面，切换语言刷新页面
+      if (this.$route.name !== 'login' && oldVal) {
+        window.location.reload()
+      }
+    }
+  }
+}
+</script>
