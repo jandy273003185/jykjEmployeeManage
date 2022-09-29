@@ -191,7 +191,7 @@
       <el-form-item prop="majorPenalize" label="有无受过原单位重大处分或惩罚">
         <el-input v-model="dataForm.majorPenalize ==0 ? '否': '是'"></el-input>
       </el-form-item>
-      <el-form-item prop="secrecyAgreement" label="在原单位是否签订过与我司所任此职位相关的保密协议">
+      <el-form-item class="secrecyAgreement" prop="secrecyAgreement" label="在原单位是否签订过与我司所任此职位相关的保密协议">
         <el-input v-model="dataForm.secrecyAgreement ==0 ? '否': '是'"></el-input>
       </el-form-item>
       <el-form-item prop="recruiter" label="招聘人姓名">
@@ -352,5 +352,8 @@ export default {
       width: 100%;
     }
   }
+}
+.secrecyAgreement .el-form-item__label{
+ line-height: 22px !important;
 }
 </style>

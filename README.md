@@ -25,7 +25,7 @@ npm run serve
 
 > 如网络不稳定，安装时出错或进度过慢！请移步 [cnpm](https://npmmirror.com/) 淘宝镜像进行安装。
 
-启动完成后，会自动打开浏览器访问 [http://localhost:8001](http://localhost:8001)，如您看到下面的页面代表`前端项目`运行成功！因为前后端分离项目，需保证`前端项目`和`后台项目`分别独立正常运行。
+启动完成后，会自动打开浏览器访问 [http://172.26.253.38:8001](http://172.26.253.38:8001)，如您看到下面的页面代表`前端项目`运行成功！因为前后端分离项目，需保证`前端项目`和`后台项目`分别独立正常运行。
 
 请留意下面的页面，其中`验证码`未能正常显示，控制台有`API请求`报错信息！这时需检查`后台项目`是否正常运行。
 
@@ -78,7 +78,7 @@ npm run serve
 <!-- 开发环境 -->
 <% if (process.env.VUE_APP_NODE_ENV === 'dev') { %>
 <script>
-window.SITE_CONFIG['apiURL'] = 'http://localhost:8080/renren-admin';
+window.SITE_CONFIG['apiURL'] = 'http://172.26.253.38:8080/api/';
 </script>
 <% } %>
 ```

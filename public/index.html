@@ -30,25 +30,25 @@
   <!-- 开发环境 -->
   <% if (process.env.VUE_APP_NODE_ENV === 'dev') { %>
     <script>
-    window.SITE_CONFIG['apiURL'] = 'http://172.26.10.35:8081';
+    window.SITE_CONFIG['apiURL'] = 'http://172.26.10.123:8080/';
     </script>
   <% } %>
   <!-- 集成测试环境 -->
   <% if (process.env.VUE_APP_NODE_ENV === 'prod:sit') { %>
     <script>
-      window.SITE_CONFIG['apiURL'] = 'http://localhost:8080/renren-admin';
+      window.SITE_CONFIG['apiURL'] = 'http://172.26.253.38:8888/api/';
     </script>
   <% } %>
   <!-- 验收测试环境 -->
   <% if (process.env.VUE_APP_NODE_ENV === 'prod:uat') { %>
     <script>
-      window.SITE_CONFIG['apiURL'] = 'http://localhost:8080/renren-admin';
+      window.SITE_CONFIG['apiURL'] = 'http://172.26.253.38:8888/api/';
     </script>
   <% } %>
   <!-- 生产环境 -->
   <% if (process.env.VUE_APP_NODE_ENV === 'prod') { %>
     <script>
-      window.SITE_CONFIG['apiURL'] = 'http://localhost:8080/renren-admin';
+      window.SITE_CONFIG['apiURL'] = 'http://172.26.253.38:8888/api/';
     </script>
   <% } %>
 </head>

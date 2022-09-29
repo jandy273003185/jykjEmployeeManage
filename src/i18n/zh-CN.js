@@ -3,7 +3,7 @@ const t = {}
 t.loading = '加载中...'
 
 t.brand = {}
-t.brand.lg = '人员信息管理平台'
+t.brand.lg = '预入职管理平台'
 t.brand.mini = '记忆'
 
 t.add = '新增'
