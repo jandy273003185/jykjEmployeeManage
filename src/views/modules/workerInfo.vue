@@ -39,16 +39,30 @@
         <el-table-column
           prop="realName"
           label="姓名"
-          sortable="custom"
           header-align="center"
           align="center"
+          width="90"
         ></el-table-column>
+        <el-table-column prop="headUrl" label="照片" header-align="center" align="center">
+          <template slot-scope="scope">
+            <el-popover placement="top-start" trigger="click">
+              <a :href="scope.row.headUrl" target="_blank" title="查看最大化图片">
+                <img width="390" height="390" :src="scope.row.headUrl" />
+              </a>
+              <img
+                slot="reference"
+                :src="scope.row.headUrl"
+                style="width: 50px; height: 50px; cursor: pointer"
+              />
+            </el-popover>
+          </template>
+        </el-table-column>
         <el-table-column
           prop="gender"
           :label="$t('user.gender')"
-          sortable="custom"
           header-align="center"
           align="center"
+          width="60"
         >
           <template slot-scope="scope">
             {{ $getDictLabel("gender", scope.row.gender) }}
@@ -58,9 +72,15 @@
         <el-table-column
           prop="mobile"
           :label="$t('user.mobile')"
-          sortable="custom"
           header-align="center"
           align="center"
+        ></el-table-column>
+        <el-table-column
+          prop="idCard"
+          label="身份证号"
+          header-align="center"
+          align="center"
+          width="170"
         ></el-table-column>
         <el-table-column
           prop="nation"
@@ -68,7 +88,7 @@
           header-align="center"
           align="center"
         ></el-table-column>
-        <!-- <el-table-column prop="status" :label="$t('user.status')" sortable="custom" header-align="center" align="center">
+        <!-- <el-table-column prop="status" :label="$t('user.status')" header-align="center" align="center">
           <template slot-scope="scope">
             <el-tag v-if="scope.row.status === 0" size="small" type="danger">{{ $t('user.status0') }}</el-tag>
             <el-tag v-else size="small" type="success">{{ $t('user.status1') }}</el-tag>
@@ -77,7 +97,6 @@
         <el-table-column
           prop="createTime"
           :label="$t('user.createDate')"
-          sortable="custom"
           header-align="center"
           align="center"
           width="180"

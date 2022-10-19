@@ -14,6 +14,8 @@ export default {
         deleteIsBatch: false,     // 删除接口，是否需要批量？
         deleteIsBatchKey: 'id',   // 删除接口，批量状态下由那个key进行标记操作？比如：pid，uid...
         exportURL: ''  ,           // 导出接口，API地址
+        exportIsBatch:false,
+        exportIsBatchKey: 'id', 
         // againInterface:false,
       },
       // 默认属性
@@ -33,7 +35,11 @@ export default {
   },
   created () {
     if (this.mixinViewModuleOptions.createdIsNeed) {
-      this.query()
+      if(this.mixinViewModuleOptions.postQuery){
+        this.query3();
+      }else{
+        this.query()
+      }
     }
   },
   activated () {
@@ -56,6 +62,33 @@ export default {
             ...this.dataForm
           }
         }
+      ).then(({ data: res }) => {
+        this.dataListLoading = false
+        if (res.code !== 0) {
+          this.dataList = []
+          this.total = 0
+          return this.$message.error(res.msg)
+        }
+        this.dataList = this.mixinViewModuleOptions.getDataListIsPage ? res.data.list : res.data
+        this.total = this.mixinViewModuleOptions.getDataListIsPage ? res.data.total : 0
+      }).catch(() => {
+        this.dataListLoading = false
+      })
+    },
+    query3 () {
+      this.dataListLoading = true
+      this.$http.post(
+        this.mixinViewModuleOptions.getDataListURL,
+        {
+         
+            order: this.order,
+            orderField: this.orderField,
+            page: this.mixinViewModuleOptions.getDataListIsPage ? this.page : null,
+            limit: this.mixinViewModuleOptions.getDataListIsPage ? this.limit : null,
+            staffType:this.mixinViewModuleOptions.staffType==0?0:1,
+            ...this.dataForm
+          }
+        
       ).then(({ data: res }) => {
         this.dataListLoading = false
         if (res.code !== 0) {
@@ -98,6 +131,10 @@ export default {
     getDataList: function () {
       this.page = 1
       this.query()
+    },
+    getDataList3: function () {
+      this.page = 1
+      this.query3()
     },
     // 新增 / 修改
     addOrUpdateHandle (id) {
@@ -153,6 +190,40 @@ export default {
         }).catch(() => {})
       }).catch(() => {})
     },
+    // 删除
+    deleteHandle3 (id) {
+      if (this.mixinViewModuleOptions.deleteIsBatch && !id && this.dataListSelections.length <= 0) {
+        return this.$message({
+          message: this.$t('prompt.deleteBatch'),
+          type: 'warning',
+          duration: 500
+        })
+      }
+      this.$confirm(this.$t('prompt.info', { 'handle': this.$t('delete') }), this.$t('prompt.title'), {
+        confirmButtonText: this.$t('confirm'),
+        cancelButtonText: this.$t('cancel'),
+        type: 'warning'
+      }).then(() => {
+        this.$http.delete(
+          `${this.mixinViewModuleOptions.deleteURL}${this.mixinViewModuleOptions.deleteIsBatch ? '' : '/' + id}`,
+          this.mixinViewModuleOptions.deleteIsBatch ? {
+            'data': id ? [id] : this.dataListSelections.map(item => item.infoId)
+          } : {}
+        ).then(({ data: res }) => {
+          if (res.code !== 0) {
+            return this.$message.error(res.msg)
+          }
+          this.$message({
+            message: this.$t('prompt.success'),
+            type: 'success',
+            duration: 500,
+            onClose: () => {
+              this.query3()
+            }
+          })
+        }).catch(() => {})
+      }).catch(() => {})
+    },
     // 导出
     exportHandle () {
       var params = qs.stringify({
@@ -160,6 +231,32 @@ export default {
         ...this.dataForm
       })
       window.location.href = `${window.SITE_CONFIG['apiURL']}${this.mixinViewModuleOptions.exportURL}?${params}`
+    },
+    exportHandle2 (row) {
+      if (this.mixinViewModuleOptions.exportIsBatch && row?!row.id:!null && this.dataListSelections.length <= 0) {
+        return this.$message({
+          message: '请选择下载项',
+          type: 'warning',
+          duration: 1000
+        })
+      }
+      let formData = new FormData();
+      formData.append("ids", (row?row.id:this.dataListSelections.map(item => item[this.mixinViewModuleOptions.exportIsBatchKey])).toString());
+      this.$http.post(
+        `${this.mixinViewModuleOptions.exportURL}${this.mixinViewModuleOptions.exportIsBatch ? '' : '/' + row?row.id:null}`,
+        formData,{ responseType: 'blob' }
+      ).then(({ data: res }) => {
+
+        const url = window.URL.createObjectURL(new Blob([res]))
+        const aLink = document.createElement('a')
+        aLink.style.display = 'none'
+        aLink.href = url
+        aLink.setAttribute('download', row?row.realName+'.xlsx':this.dataListSelections[0].realName+'.xlsx')
+        document.body.appendChild(aLink)
+        aLink.click()
+        document.body.removeChild(aLink)
+        window.URL.revokeObjectURL(url)
+      }).catch(() => {})
     },
     query2(){
       this.$http.get(

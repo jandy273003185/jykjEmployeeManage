@@ -447,7 +447,7 @@ export default {
         getDataListIsPage: true,
         deleteURL: "/staffInfoDetail",
         deleteIsBatch: true,
-        staffType:0,
+        staffType:1,
       },
       positionNameVisible: false,
       dataForm: {},
