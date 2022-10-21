@@ -366,8 +366,12 @@
           label="内部推荐人"
           header-align="center"
           align="center"
-          width="120"
-        ></el-table-column>
+          width="126"
+        >
+          <template slot-scope="scope" v-if="scope.row.recruitmentMethod == '12/内部推荐'?true:false">
+            <el-input v-model="scope.row.internalReferrer" placeholder="内部推荐人" />
+          </template>
+        </el-table-column>
         <el-table-column
           prop="staffNature"
           label="员工类型"
