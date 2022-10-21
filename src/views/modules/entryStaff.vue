@@ -3,10 +3,10 @@
     <div class="mod-sys__role">
       <el-form :inline="true" :model="dataForm" @keyup.enter.native="getDataList3()">
         <el-form-item>
-          <el-input v-model="dataForm.realName" placeholder="姓名" clearable style=" width:140px"></el-input>
+          <el-input v-model="dataForm.realName" placeholder="姓名" clearable></el-input>
         </el-form-item>
         <el-form-item>
-          <el-select v-model="dataForm.inductionPlace" placeholder="入职地" style=" width:140px">
+          <el-select v-model="dataForm.inductionPlace" placeholder="入职地">
             <el-option
               v-for="item in entryArr"
               :key="item.value"
@@ -21,7 +21,7 @@
             v-model="dataForm.createTimeStart"
             type="date"
             placeholder="开始日期"
-            style=" width:140px"
+            style=" width:150px"
           >
           </el-date-picker>
         </el-form-item>
@@ -30,7 +30,7 @@
             v-model="dataForm.createTimeEnd"
             type="date"
             placeholder="结束日期"
-            style=" width:140px"
+            style=" width:150px"
           >
           </el-date-picker>
         </el-form-item>
@@ -50,26 +50,11 @@
             v-if="$hasPermission('sys:role:save')"
             type="primary"
             @click="saveHandle()"
-            >保存</el-button
+            >写入SAP</el-button
           >
         </el-form-item>
-        <el-form-item>
-          <el-button
-            v-if="$hasPermission('sys:role:save')"
-            type="primary"
-            @click="synchroHandle()"
-            >同步SAP</el-button
-          >
-        </el-form-item>
-        <el-form-item>
-          <el-upload 
-              action="" 
-              :multiple="true"
-              :http-request="importExcel"
-              :show-file-list="false">
-              <el-button type="primary" icon="el-icon-upload" >导入</el-button>
-          </el-upload>
-        </el-form-item>
+       
+        
       </el-form>
       <el-table
         v-loading="dataListLoading"
@@ -85,211 +70,28 @@
           align="center"
           width="50"
         ></el-table-column>
-        <el-table-column
-          prop="corporation"
-          label="法人公司"
-          header-align="center"
-          align="center"
-          width="180"
-        >
+        <el-table-column prop="recruiter" label="招聘专员" header-align="center" align="center" width="100"></el-table-column>
+        <el-table-column prop="reportDate" label="报到日期" header-align="center" align="center" width="100"></el-table-column>
+        <el-table-column prop="realName" label="姓名" header-align="center" align="center" width="100"></el-table-column>
+        <el-table-column prop="gender" label="性别" header-align="center" align="center">
           <template slot-scope="scope">
-            <el-select v-model="scope.row.corporation" placeholder="法人公司">
-              <el-option
-                v-for="item in corporationArr"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              >
-              </el-option>
-            </el-select>
+            {{ $getDictLabel("gender", scope.row.gender) }}
           </template>
         </el-table-column>
-        <el-table-column
-          prop="inductionPlace"
-          label="入职地"
-          header-align="center"
-          align="center"
-          width="180"
-        >
-          <template slot-scope="scope">
-            <el-select v-model="scope.row.inductionPlace" placeholder="入职地">
-              <el-option
-                v-for="item in entryArr"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              >
-              </el-option>
-            </el-select>
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="realName1"
-          label="一级组织"
-          header-align="center"
-          align="center"
-          width="100"
-        ></el-table-column>
-        <el-table-column
-          prop="realName2"
-          label="二级组织"
-          header-align="center"
-          align="center"
-          width="150"
-        ></el-table-column>
-        <el-table-column
-          prop="realName3"
-          label="三级组织"
-          header-align="center"
-          align="center"
-          width="180"
-        ></el-table-column>
-         <el-table-column
-          prop="realName4"
-          label="四级组织"
-          header-align="center"
-          align="center"
-          width="360"
-        ></el-table-column>
-        <el-table-column
-          prop="costCenter"
-          label="成本中心"
-          header-align="center"
-          align="center"
-          width="180"
-        >
-          <template slot-scope="scope">
-            <el-input
-              class="positionName"
-              v-model="scope.row.costCenter"
-              readonly
-              @click.native="positionNameClick(scope)"
-              placeholder="成本中心"
-            />
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="realName"
-          label="姓名"
-          header-align="center"
-          align="center"
-          width="100"
-        ></el-table-column>
-        <el-table-column
-          prop="reportDate"
-          label="拟入职日期"
-          header-align="center"
-          align="center"
-          width="180"
-        >
-          <template slot-scope="scope">
-            <el-date-picker
-              v-model="scope.row.reportDate"
-              type="date"
-              placeholder="选择日期"
-              style="width: 150px"
-            >
-            </el-date-picker>
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="organizationPostName"
-          label="岗位编码"
-          header-align="center"
-          align="center"
-          min-width="150"
-        >
-          <template slot-scope="scope">
-            <el-input
-              class="positionName"
-              v-model="scope.row.organizationPostName"
-              readonly
-              @click.native="positionNameClick(scope)"
-              placeholder="岗位编码"
-            />
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="postName"
-          label="岗位名称"
-          header-align="center"
-          align="center"
-          width="150"
-        >
-          <template slot-scope="scope">
-            {{scope.row.postName}}
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="staffNature"
-          label="员工类型"
-          header-align="center"
-          align="center"
-          width="150"
-        >
-          <template slot-scope="scope">
-            <el-select v-model="scope.row.staffNature" placeholder="员工类型">
-              <el-option
-                v-for="item in employeeTypeArr"
-                :key="item"
-                :label="item"
-                :value="item"
-              >
-              </el-option>
-            </el-select>
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="recruitmentMethod"
-          label="招聘类型"
-          header-align="center"
-          align="center"
-          width="150"
-        >
-          <template slot-scope="scope">
-            <el-select v-model="scope.row.recruitmentMethod" placeholder="招聘类型">
-              <el-option
-                v-for="item in recruitmentMethodArr"
-                :key="item"
-                :label="item"
-                :value="item"
-              >
-              </el-option>
-            </el-select>
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="rank"
-          label="员工职级"
-          header-align="center"
-          align="center"
-          width="130"
-        >
-          <template slot-scope="scope">
-            <el-select v-model="scope.row.rank" placeholder="员工职级">
-              <el-option v-for="item in jobArr" :key="item" :label="item" :value="item">
-              </el-option>
-            </el-select>
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="idCard"
-          label="身份证号码"
-          header-align="center"
-          align="center"
-          width="180"
-        ></el-table-column>
-         <el-table-column
-          prop="postName"
-          label="部门面试人"
-          header-align="center"
-          align="center"
-          width="150"
-        >
-          <template slot-scope="scope">
-            <el-input v-model="scope.row.postName" placeholder="部门面试人" />
-          </template>
-        </el-table-column>
+        <el-table-column prop="realName" label="一级组织" header-align="center" align="center" width="100"></el-table-column>
+        <el-table-column prop="realName" label="二级组织" header-align="center" align="center" width="100"></el-table-column>
+        <el-table-column prop="realName" label="三级组织" header-align="center" align="center" width="100"></el-table-column>
+        <el-table-column prop="realName" label="四级组织" header-align="center" align="center" width="100"></el-table-column>
+        <el-table-column prop="postName" label="个人岗位名称" header-align="center" align="center" width="120"></el-table-column>
+        <el-table-column prop="realName" label="职族" header-align="center" align="center" width="100"></el-table-column>
+        <el-table-column prop="corporation" label="法人公司" header-align="center" align="center" width="220"></el-table-column>
+        <el-table-column prop="realName" label="职类" header-align="center" align="center" width="100"></el-table-column>
+        <el-table-column prop="contractPeriod" label="合同期限" header-align="center" align="center" width="100"></el-table-column>
+        <el-table-column prop="probationPeriod" label="试用期" header-align="center" align="center" width="100"></el-table-column>
+        <el-table-column prop="laborContractWorkplace" label="劳动合同工作地" header-align="center" align="center" width="180"></el-table-column>
+        <el-table-column prop="costCenter" label="成本中心" header-align="center" align="center" width="150"></el-table-column>
+        <el-table-column prop="mobile" label="手机号码" header-align="center" align="center" width="120"></el-table-column>
+        <el-table-column prop="staffNature" label="员工类型" header-align="center" align="center" width="120"></el-table-column>
       </el-table>
       <el-pagination
         :current-page="page"
@@ -331,7 +133,7 @@ export default {
         getDataListIsPage: true,
         deleteURL: "/staffInfoDetail",
         deleteIsBatch: true,
-        staffType:1,
+        staffType:0,
       },
       positionNameVisible: false,
       dataForm: {},
@@ -485,41 +287,6 @@ export default {
             }
           })
       }).catch(() => {})
-    },
-    synchroHandle(){
-      this.$http.post(
-        '/staffInfoDetail/syncSap',this.dataList.map(item => item.infoId)
-      ).then(({ data: res }) => {
-        if (res.code !== 0) {
-            return this.$message.error(res.msg)
-          }
-          this.$message({
-            message: this.$t('prompt.success'),
-            type: 'success',
-            duration: 500,
-            onClose: () => {
-              this.visible = false
-              this.getDataList3();
-            }
-          })
-      }).catch(() => {})
-    },
-    importExcel(param){
-      let params = {
-        // id: this.$route.params.url,
-        data: new FormData(),
-      };
-      params.data.append("file",param.file);
-      // params.data.append("fileName",encodeURI(param.file.name));
-      this.$http.post('/staffInfoDetail/import',params.data)
-        .then(res => {
-        if(res.data.code=="0"){
-            this.$message.success('导入成功！')
-            this.getDataList3()
-        }else{
-          this.$message.error(res.data.msg)
-        }
-      })
     },
   },
 };

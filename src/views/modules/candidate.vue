@@ -237,7 +237,7 @@
         >
           <template slot-scope="scope">
             <el-select
-              v-model="scope.row.contractPeriod || value3"
+              v-model="scope.row.contractPeriod"
               placeholder="合同期限"
             >
               <el-option
@@ -258,7 +258,7 @@
           width="120"
         >
           <template slot-scope="scope">
-            <el-select v-model="scope.row.contractPeriod || value4" placeholder="试用期">
+            <el-select v-model="scope.row.probationPeriod" placeholder="试用期">
               <el-option
                 v-for="item in probationArr"
                 :key="item"
