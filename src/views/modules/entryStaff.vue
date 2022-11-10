@@ -49,7 +49,7 @@
           <el-button
             v-if="$hasPermission('sys:role:save')"
             type="primary"
-            @click="saveHandle()"
+            @click="writeSAP()"
             >写入SAP</el-button
           >
         </el-form-item>
@@ -78,14 +78,14 @@
             {{ $getDictLabel("gender", scope.row.gender) }}
           </template>
         </el-table-column>
-        <el-table-column prop="realName" label="一级组织" header-align="center" align="center" width="100"></el-table-column>
-        <el-table-column prop="realName" label="二级组织" header-align="center" align="center" width="100"></el-table-column>
-        <el-table-column prop="realName" label="三级组织" header-align="center" align="center" width="100"></el-table-column>
-        <el-table-column prop="realName" label="四级组织" header-align="center" align="center" width="100"></el-table-column>
+        <el-table-column prop="firstDeptName" label="一级组织" header-align="center" align="center" width="100"></el-table-column>
+        <el-table-column prop="secondDeptName" label="二级组织" header-align="center" align="center" width="100"></el-table-column>
+        <el-table-column prop="thirdDeptName" label="三级组织" header-align="center" align="center" width="100"></el-table-column>
+        <el-table-column prop="fourthDeptName" label="四级组织" header-align="center" align="center" width="100"></el-table-column>
         <el-table-column prop="postName" label="个人岗位名称" header-align="center" align="center" width="120"></el-table-column>
-        <el-table-column prop="realName" label="职族" header-align="center" align="center" width="100"></el-table-column>
+        <el-table-column prop="zzzh" label="职族" header-align="center" align="center" width="100"></el-table-column>
         <el-table-column prop="corporation" label="法人公司" header-align="center" align="center" width="220"></el-table-column>
-        <el-table-column prop="realName" label="职类" header-align="center" align="center" width="100"></el-table-column>
+        <el-table-column prop="zzzl" label="职类" header-align="center" align="center" width="100"></el-table-column>
         <el-table-column prop="contractPeriod" label="合同期限" header-align="center" align="center" width="100"></el-table-column>
         <el-table-column prop="probationPeriod" label="试用期" header-align="center" align="center" width="100"></el-table-column>
         <el-table-column prop="laborContractWorkplace" label="劳动合同工作地" header-align="center" align="center" width="180"></el-table-column>
@@ -251,6 +251,7 @@ export default {
       ],
       employeeTypeArr: ["1/正式合同工", "2/实习员工", "5-时薪制派遣工"],
       workPropertyArr: ["X/外派", "/非外派"],
+      groupArr:[],
     };
   },
   methods: {
@@ -270,9 +271,16 @@ export default {
         this.dataList[this.row].costCenter = data.label;
       }
     },
-    saveHandle(){
+    writeSAP(){
+      if (this.dataListSelections.length <= 0) {
+        return this.$message({
+          message: '请选择',
+          type: 'warning',
+          duration: 1000
+        })
+      }
       this.$http.post(
-        'staffInfoDetail/saveOrUpdate',this.dataList
+        'staffInfoDetail/pushSap',this.dataListSelections.map((item)=>{return item.infoId})
       ).then(({ data: res }) => {
         if (res.code !== 0) {
             return this.$message.error(res.msg)

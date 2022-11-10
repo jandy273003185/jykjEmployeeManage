@@ -19,6 +19,7 @@
         <el-form-item>
           <el-date-picker
             v-model="dataForm.createTimeStart"
+            value-format="yyyy-MM-dd HH:mm:ss"
             type="date"
             placeholder="开始日期"
             style=" width:150px"
@@ -27,7 +28,7 @@
         </el-form-item>
         <el-form-item>
           <el-date-picker
-            v-model="dataForm.createTimeEnd"
+            value-format="yyyy-MM-dd HH:mm:ss"
             type="date"
             placeholder="结束日期"
             style=" width:150px"
@@ -49,7 +50,7 @@
           <el-button
             v-if="$hasPermission('sys:role:save')"
             type="primary"
-            @click="saveHandle()"
+            @click="writeSAP()"
             >写入SAP</el-button
           >
         </el-form-item>
@@ -74,14 +75,14 @@
         <el-table-column prop="realName" label="姓名" header-align="center" align="center" width="100"></el-table-column>
         <el-table-column prop="corporation" label="法人公司" header-align="center" align="center" width="100"></el-table-column>
         <el-table-column prop="costCenter" label="成本中心" header-align="center" align="center" width="100"></el-table-column>
-        <el-table-column prop="realName" label="职类" header-align="center" align="center" width="100"></el-table-column>
-        <el-table-column prop="realName" label="一级组织" header-align="center" align="center" width="100"></el-table-column>
-        <el-table-column prop="realName" label="二级组织" header-align="center" align="center" width="100"></el-table-column>
-        <el-table-column prop="realName" label="三级组织" header-align="center" align="center" width="100"></el-table-column>
-        <el-table-column prop="realName" label="四级组织" header-align="center" align="center" width="100"></el-table-column>
+        <el-table-column prop="zzzl" label="职类" header-align="center" align="center" width="100"></el-table-column>
+        <el-table-column prop="firstDeptName" label="一级组织" header-align="center" align="center" width="100"></el-table-column>
+        <el-table-column prop="secondDeptName" label="二级组织" header-align="center" align="center" width="100"></el-table-column>
+        <el-table-column prop="thirdDeptName" label="三级组织" header-align="center" align="center" width="100"></el-table-column>
+        <el-table-column prop="fourthDeptName" label="四级组织" header-align="center" align="center" width="100"></el-table-column>
         <el-table-column prop="staffNature" label="员工类别" header-align="center" align="center" width="100"></el-table-column>
         <el-table-column prop="realName" label="派遣公司" header-align="center" align="center" width="100"></el-table-column>
-        <el-table-column prop="realName" label="部门面试人" header-align="center" align="center" width="100"></el-table-column>
+        <el-table-column prop="departInterviewer" label="部门面试人" header-align="center" align="center" width="100"></el-table-column>
         <el-table-column prop="postName" label="岗位" header-align="center" align="center" width="100"></el-table-column>
       </el-table>
       <el-pagination
@@ -261,9 +262,16 @@ export default {
         this.dataList[this.row].costCenter = data.label;
       }
     },
-    saveHandle(){
+    writeSAP(){
+      if (this.dataListSelections.length <= 0) {
+        return this.$message({
+          message: '请选择',
+          type: 'warning',
+          duration: 1000
+        })
+      }
       this.$http.post(
-        'staffInfoDetail/saveOrUpdate',this.dataList
+        'staffInfoDetail/pushSap',this.dataListSelections.map((item)=>{return item.infoId})
       ).then(({ data: res }) => {
         if (res.code !== 0) {
             return this.$message.error(res.msg)
@@ -278,6 +286,20 @@ export default {
             }
           })
       }).catch(() => {})
+    },
+    getGroupByPlan(planId){//获取组织
+      let params = {
+        data: new FormData(),
+      };
+      params.data.append("planId",planId);
+      this.$http.post('/sapApi/getGroupByPlanId',params.data)
+        .then(res => {
+        if(res.data.code=="0"){
+            this.groupArr = res.data.data
+        }else{
+          this.$message.error(res.data.msg)
+        }
+      })
     },
   },
 };

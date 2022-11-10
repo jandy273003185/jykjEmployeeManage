@@ -145,7 +145,7 @@
         <el-table-column prop="endDate" label="结束时间" header-align="center" align="center"></el-table-column>
         <el-table-column prop="cause" label="出国事由" header-align="center" align="center"></el-table-column>
         <el-table-column prop="company" label="所至单位" header-align="center" align="center"></el-table-column>
-        <el-table-column prop="totalCost" label="总费用（RMB）" header-align="center" align="center"></el-table-column>
+        <el-table-column prop="totalCost" label="总费用(RMB)" header-align="center" align="center"></el-table-column>
         <el-table-column prop="bearMode" label="费用承担方式" header-align="center" align="center"></el-table-column>
       </el-table>
       <el-table

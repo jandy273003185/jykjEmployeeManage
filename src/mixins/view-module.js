@@ -102,6 +102,14 @@ export default {
         this.dataListLoading = false
       })
     },
+    // 单选
+    singleSelectionChangeHandle (val) {
+      this.dataListSelections = val
+      if (val.length > 1) {
+        this.$refs.tb.clearSelection();
+        this.$refs.tb.toggleRowSelection(val.pop());
+      }
+    },
     // 多选
     dataListSelectionChangeHandle (val) {
       this.dataListSelections = val
@@ -232,7 +240,7 @@ export default {
       })
       window.location.href = `${window.SITE_CONFIG['apiURL']}${this.mixinViewModuleOptions.exportURL}?${params}`
     },
-    exportHandle2 (row) {
+    exportHandle2 (row,urlInterface) { 
       if (this.mixinViewModuleOptions.exportIsBatch && row?!row.id:!null && this.dataListSelections.length <= 0) {
         return this.$message({
           message: '请选择下载项',
@@ -241,17 +249,16 @@ export default {
         })
       }
       let formData = new FormData();
-      formData.append("ids", (row?row.id:this.dataListSelections.map(item => item[this.mixinViewModuleOptions.exportIsBatchKey])).toString());
+      formData.append("ids", (row?[row.id]:[this.dataListSelections.map(item => item[this.mixinViewModuleOptions.exportIsBatchKey])]));
       this.$http.post(
-        `${this.mixinViewModuleOptions.exportURL}${this.mixinViewModuleOptions.exportIsBatch ? '' : '/' + row?row.id:null}`,
+        `${urlInterface}${this.mixinViewModuleOptions.exportIsBatch ? '' : '/' + row?row.id:null}`,
         formData,{ responseType: 'blob' }
       ).then(({ data: res }) => {
-
         const url = window.URL.createObjectURL(new Blob([res]))
         const aLink = document.createElement('a')
         aLink.style.display = 'none'
         aLink.href = url
-        aLink.setAttribute('download', row?row.realName+'.xlsx':this.dataListSelections[0].realName+'.xlsx')
+        aLink.setAttribute('download', row?row.realName+'.xlsx':(this.dataListSelections.length>1||urlInterface=='/staffInfo/downloadHeadPic'?this.dataListSelections[0].realName+'.zip':this.dataListSelections[0].realName+'.xlsx'))
         document.body.appendChild(aLink)
         aLink.click()
         document.body.removeChild(aLink)

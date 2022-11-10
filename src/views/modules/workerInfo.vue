@@ -9,33 +9,54 @@
             clearable
           ></el-input>
         </el-form-item>
-        <!-- <el-form-item>
-          <ren-select v-model="dataForm.gender" dict-type="gender" :placeholder="$t('user.gender')"></ren-select>
+        <el-form-item>
+          <el-date-picker
+            v-model="dataForm.createTimeStart"
+            value-format="yyyy-MM-dd HH:mm:ss"
+            type="date"
+            placeholder="创建开始日期"
+            style="width:150px"
+          >
+          </el-date-picker>
         </el-form-item>
         <el-form-item>
-          <ren-dept-tree v-model="dataForm.deptId" :placeholder="$t('dept.title')" :query="true"></ren-dept-tree>
-        </el-form-item> -->
+          <el-date-picker
+            v-model="dataForm.createTimeEnd"
+            value-format="yyyy-MM-dd HH:mm:ss"
+            type="date"
+            placeholder="创建结束日期"
+            style="width:150px"
+          >
+          </el-date-picker>
+        </el-form-item>
         <el-form-item>
           <el-button @click="getDataList()">{{ $t("query") }}</el-button>
         </el-form-item>
-        <!-- <el-form-item>
-          <el-button v-if="$hasPermission('sys:user:save')" type="primary" @click="addOrUpdateHandle()">{{ $t('add') }}</el-button>
+        <el-form-item>
+          <el-button type="info" @click="exportHandle2(null,'/staffInfo/export')">批量下载入职信息表</el-button>
         </el-form-item>
         <el-form-item>
-          <el-button v-if="$hasPermission('sys:user:delete')" type="danger" @click="deleteHandle()">{{ $t('deleteBatch') }}</el-button>
+          <el-button type="info" @click="exportHandle2(null,'/staffInfo/exportSum')">批量下载入职信息汇总表</el-button>
         </el-form-item>
         <el-form-item>
-          <el-button v-if="$hasPermission('sys:user:export')" type="info" @click="exportHandle()">{{ $t('export') }}</el-button>
-        </el-form-item> -->
+          <el-button type="info" @click="exportHandle2(null,'/staffInfo/downloadHeadPic')">批量下载员工头像</el-button>
+        </el-form-item>
       </el-form>
       <el-table
         v-loading="dataListLoading"
         :data="dataList"
         border
         @sort-change="dataListSortChangeHandle"
+        @selection-change="dataListSelectionChangeHandle"
         style="width: 100%"
       >
         <!-- <el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column> -->
+        <el-table-column
+          type="selection"
+          header-align="center"
+          align="center"
+          width="50"
+        ></el-table-column>
         <el-table-column
           prop="realName"
           label="姓名"
@@ -46,12 +67,12 @@
         <el-table-column prop="headUrl" label="照片" header-align="center" align="center">
           <template slot-scope="scope">
             <el-popover placement="top-start" trigger="click">
-              <a :href="scope.row.headUrl" target="_blank" title="查看最大化图片">
-                <img width="390" height="390" :src="scope.row.headUrl" />
+              <a :href="'api/'+scope.row.headUrl" target="_blank" title="查看最大化图片">
+                <img width="390" height="390" :src="'api/'+scope.row.headUrl" />
               </a>
               <img
                 slot="reference"
-                :src="scope.row.headUrl"
+                :src="'api/'+scope.row.headUrl"
                 style="width: 50px; height: 50px; cursor: pointer"
               />
             </el-popover>
@@ -151,9 +172,8 @@ export default {
       mixinViewModuleOptions: {
         getDataListURL: "/workerInfo/page",
         getDataListIsPage: true,
-        // deleteURL: '/sys/user',
-        // deleteIsBatch: true,
-        // exportURL: '/sys/user/export'
+        exportIsBatch: true,
+        exportURL: "/staffInfo/export",
       },
       dataForm: {
         realName: "",

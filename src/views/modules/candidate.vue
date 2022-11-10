@@ -3,10 +3,10 @@
     <div class="mod-sys__role">
       <el-form :inline="true" :model="dataForm" @keyup.enter.native="getDataList3()">
         <el-form-item>
-          <el-input v-model="dataForm.realName" placeholder="姓名" clearable></el-input>
+          <el-input class="inputW" v-model="dataForm.realName" placeholder="姓名" clearable></el-input>
         </el-form-item>
         <el-form-item>
-          <el-select v-model="dataForm.inductionPlace" placeholder="入职地">
+          <el-select class="inputW" v-model="dataForm.inductionPlace" placeholder="入职地">
             <el-option
               v-for="item in entryArr"
               :key="item.value"
@@ -30,16 +30,20 @@
           </el-date-picker> -->
           <el-date-picker
             v-model="dataForm.createTimeStart"
+            value-format="yyyy-MM-dd HH:mm:ss"
             type="date"
             placeholder="开始日期"
+             class="inputW"
           >
           </el-date-picker>
         </el-form-item>
         <el-form-item>
           <el-date-picker
             v-model="dataForm.createTimeEnd"
+            value-format="yyyy-MM-dd HH:mm:ss"
             type="date"
             placeholder="结束日期"
+             class="inputW"
           >
           </el-date-picker>
         </el-form-item>
@@ -47,10 +51,21 @@
           <el-select
             v-model="dataForm.noticeStatus"
             placeholder="提醒状态"
-            style="width: 150px"
+            class="inputW"
           >
             <el-option label="未提醒" value="0"> </el-option>
             <el-option label="已提醒" value="1"> </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item>
+          <el-select
+            v-model="dataForm.inductionStatus"
+            placeholder="入职状态"
+             class="inputW"
+          >
+            <el-option label="待入职" value="0"> </el-option>
+            <el-option label="已入职" value="1"> </el-option>
+            <el-option label="放弃入职" value="2"> </el-option>
           </el-select>
         </el-form-item>
         <el-form-item>
@@ -61,7 +76,7 @@
             v-if="$hasPermission('sys:role:delete')"
             type="danger"
             @click="deleteHandle3()"
-            >{{ $t("deleteBatch") }}</el-button
+            >放弃入职</el-button
           >
         </el-form-item>
         <el-form-item>
@@ -88,7 +103,7 @@
             >发起OA入职流程提醒邮件</el-button
           >
         </el-form-item>
-        <el-form-item>
+        <!-- <el-form-item>
           <el-upload 
               action="" 
               :multiple="true"
@@ -96,7 +111,7 @@
               :show-file-list="false">
               <el-button type="primary" icon="el-icon-upload" >导入</el-button>
           </el-upload>
-        </el-form-item>
+        </el-form-item> -->
       </el-form>
       <el-table
         v-loading="dataListLoading"
@@ -119,6 +134,16 @@
           align="center"
           width="120"
         ></el-table-column>
+        <el-table-column prop="inductionStatus" label="入职状态" header-align="center" align="center"
+          ><template slot-scope="scope">
+            {{ scope.row.inductionStatus== 0 ?'待入职':(scope.row.inductionStatus== 1 ?'已入职':'放弃入职') }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="noticeStatus" label="提醒状态" header-align="center" align="center"
+          ><template slot-scope="scope">
+            {{ scope.row.noticeStatus ==0 ?'未提醒':'已提醒' }}
+          </template>
+        </el-table-column>
         <el-table-column
           prop="reportDate"
           label="报到日期"
@@ -344,13 +369,13 @@
         ></el-table-column>
         <el-table-column
           prop="recruitmentMethod"
-          label="招聘方式"
+          label="招聘类型"
           header-align="center"
           align="center"
           width="150"
         >
           <template slot-scope="scope">
-            <el-select v-model="scope.row.recruitmentMethod" placeholder="招聘方式">
+            <el-select v-model="scope.row.recruitmentMethod" placeholder="招聘类型" @change="recruitmentMethodChange(scope.row)">
               <el-option
                 v-for="item in recruitmentMethodArr"
                 :key="item"
@@ -369,7 +394,15 @@
           width="126"
         >
           <template slot-scope="scope" v-if="scope.row.recruitmentMethod == '12/内部推荐'?true:false">
-            <el-input v-model="scope.row.internalReferrer" placeholder="内部推荐人" />
+            <el-select v-model="scope.row.internalReferrer" placeholder="内部推荐人">
+              <el-option
+                v-for="item in internalReferrerArr"
+                :key="item.refEmpId"
+                :label="item.refEmpInfo"
+                :value="item.refEmpId"
+              >
+              </el-option>
+            </el-select>
           </template>
         </el-table-column>
         <el-table-column
@@ -410,6 +443,24 @@
             </el-select>
           </template>
         </el-table-column>
+        <el-table-column
+          :label="$t('handle')"
+          fixed="right"
+          header-align="center"
+          align="center"
+          width="130"
+        >
+          <template slot-scope="scope">
+            <el-upload 
+              action="" 
+              :multiple="true"
+              :http-request="uploadFile"
+              :data="{infoId:scope.row.infoId}"
+              :show-file-list="false">
+              <el-button style="width:88px;" type="primary" >上传附件</el-button>
+          </el-upload>
+          </template>
+        </el-table-column>
       </el-table>
       <el-pagination
         :current-page="page"
@@ -424,16 +475,56 @@
       <el-dialog
         :title="title"
         :visible.sync="positionNameVisible"
-        width="50%"
+        width="80%"
         :modal="false"
         :close-on-click-modal="false"
         :close-on-press-escape="false"
       >
-        <el-tree
-          :data="positionNameArr"
-          :props="potionNameProps"
-          @node-click="positionNameTree"
-        ></el-tree>
+        <div style="display:flex;">
+          <div style="width:40%;margin-right:20px;">
+            <el-input style="margin-bottom:10px" placeholder="输入部门关键字进行过滤" v-model="deptFilter"/>
+            <el-tree
+              :data="deptArr"
+              :props="potionNameProps"
+              @node-click="positionNameTree"
+              ref="tree"
+              :filter-node-method="filterNode"
+            ></el-tree>
+          </div>
+          <div style="width:60%;">
+            <el-input style="margin-bottom:18px" placeholder="输入岗位关键字进行过滤" v-model="positionFilter" @input="positionInput"/>
+            <el-table
+              v-loading="dataListLoading"
+              :data="positionNameArr"
+              border
+              @selection-change="singleSelectionChangeHandle"
+              @sort-change="dataListSortChangeHandle"
+              ref="tb"
+            >
+              <el-table-column
+                type="selection"
+                header-align="center"
+                align="center"
+                width="50"
+                :selectable="selected"
+              ></el-table-column>
+              <el-table-column
+                v-if="title == '编制岗位名称'"
+                prop="planName"
+                label="岗位"
+              ></el-table-column>
+              <el-table-column
+                v-else
+                prop="ccname"
+                label="成本中心"
+              ></el-table-column>
+            </el-table>
+          </div>
+        </div>
+        <template slot="footer">
+            <el-button @click="positionNameVisible = false">{{ $t('cancel') }}</el-button>
+            <el-button type="primary" @click="positionConfirm()">{{ $t('confirm') }}</el-button>
+          </template>
       </el-dialog>
     </div>
   </el-card>
@@ -524,30 +615,11 @@ export default {
           value: "2600/深圳市云芯智联信息技术有限公司",
         },
       ],
-      positionNameArr: [
-        {
-          label: "记忆科技",
-          children: [
-            {
-              label: "流程与IT变革中心",
-              children: [
-                {
-                  label: "ERP IT部",
-                  children: [
-                    {
-                      label: "50001238 开发高级工程师 (研发技术族-IT开发-张三)",
-                    },
-                  ],
-                },
-              ],
-            },
-          ],
-        },
-      ],
+      deptArr: [],
       title: "编制岗位名称",
       potionNameProps: {
-        children: "children",
-        label: "label",
+        children: "childrenDept",
+        label: "deptName",
       },
       row: 0,
       jobArr: ["R1", "R2", "R3", "R4", "R5", "R6", "R7", "R8", "R9", "R10", "R11"],
@@ -567,6 +639,11 @@ export default {
       ],
       employeeTypeArr: ["1/正式合同工", "2/实习员工", "3/劳务派遣工"],
       workPropertyArr: ["X/外派", "/非外派"],
+      positionNameArr:[],
+      positionNameArr2:[],
+      deptFilter:'',
+      positionFilter:'',
+      internalReferrerArr:[],
     };
   },
   methods: {
@@ -574,30 +651,110 @@ export default {
       this.row = data.$index;
       this.title = data.column.label
       this.positionNameVisible = true;
+      this.positionNameArr = [];
+      this.positionNameArr2 = [];
+      if(this.title == '编制岗位名称'){
+        this.getPosition();
+      }else{
+        this.getCostCenter();
+      }
     },
     positionNameTree(data) {
       if(this.title == '编制岗位名称'){
-        this.dataList[this.row].organizationPostName = data.label;
+        // this.dataList[this.row].organizationPostName = data.label;
+        this.positionNameArr = data.postDTOS
+        this.positionNameArr2 = data.postDTOS
       }else{
         this.dataList[this.row].costCenter = data.label;
+        this.positionNameArr = data.costCenters
+        this.positionNameArr2 = data.costCenters
       }
     },
-    saveHandle(){
-      this.$http.post(
-        'staffInfoDetail/saveOrUpdate',this.dataList
-      ).then(({ data: res }) => {
-        if (res.code !== 0) {
-            return this.$message.error(res.msg)
-          }
-          this.$message({
-            message: this.$t('prompt.success'),
-            type: 'success',
-            duration: 500,
-            onClose: () => {
-              this.visible = false
-              this.getDataList3();
+    positionConfirm(){
+      if(this.title == '编制岗位名称'){
+        this.dataList[this.row].organizationPostId = this.dataListSelections[0].planId;
+        this.dataList[this.row].organizationPostName = this.dataListSelections[0].planName;
+      }else{
+        this.dataList[this.row].ccid = this.dataListSelections[0].ccid;
+        this.dataList[this.row].costCenter = this.dataListSelections[0].ccname;
+      }
+
+      let _firstDeptId = null;
+      let _secondDeptId = null;
+      this.deptArr.map((first)=>{
+        if(first.childrenDept.length > 0){
+          first.childrenDept.map((second)=>{
+            if(second.childrenDept.length > 0){
+              second.childrenDept.map((third)=>{
+                // console.log(third.deptId+'------'+this.dataListSelections[0].deptId)
+                if(third.deptId == this.dataListSelections[0].deptId){
+                  // console.log(third.parentDeptId);
+                  _secondDeptId = third.parentDeptId//三级组织
+                  this.dataList[this.row].thirdDeptId = this.dataListSelections[0].deptId
+                  this.dataList[this.row].thirdDeptName = this.dataListSelections[0].deptName//三级组织
+                  if(this.title == '编制岗位名称'){
+                    this.dataList[this.row].fourthDeptId = this.dataListSelections[0].planId
+                    this.dataList[this.row].fourthDeptName = this.dataListSelections[0].planName//四级组织
+                  // }else{
+                  //   this.dataList[this.row].fourthDeptId = this.dataListSelections[0].ccid
+                  //   this.dataList[this.row].fourthDeptName = this.dataListSelections[0].ccname//四级组织
+                  }
+                }
+              })
             }
           })
+        }
+      })
+      this.deptArr.map((first)=>{
+        if(first.childrenDept.length > 0){
+          first.childrenDept.map((second)=>{
+            if(second.childrenDept.length > 0){
+              if(second.deptId == _secondDeptId){
+                _firstDeptId = second.parentDeptId
+                this.dataList[this.row].secondDeptId = second.deptId
+                this.dataList[this.row].secondDeptName = second.deptName//二级组织
+              }
+            }
+          })
+        }
+      })
+      this.deptArr.map((first)=>{
+        if(first.deptId == _firstDeptId){
+          this.dataList[this.row].firstDeptId = first.deptId
+          this.dataList[this.row].firstDeptName = first.deptName//一级组织
+        }
+      })
+      
+      this.dataList[this.row].deptId = this.dataListSelections[0].deptId;
+      this.dataList[this.row].deptName = this.dataListSelections[0].deptName;
+      this.dataList[this.row].zzzh = this.dataListSelections[0].zzzh;
+      this.dataList[this.row].zzzl = this.dataListSelections[0].zzzl;
+      this.dataList[this.row].zzzrj = this.dataListSelections[0].zzzrj;
+      this.positionNameVisible = false;
+    },
+    saveHandle(){
+      if (this.dataListSelections.length <= 0) {
+        return this.$message({
+          message: '请选择',
+          type: 'warning',
+          duration: 1000
+        })
+      }
+      this.$http.post(
+        'staffInfoDetail/saveOrUpdate',this.dataListSelections
+      ).then(({ data: res }) => {
+        if (res.code !== 0) {
+          return this.$message.error(res.msg)
+        }
+        this.$message({
+          message: this.$t('prompt.success'),
+          type: 'success',
+          duration: 500,
+          onClose: () => {
+            this.visible = false
+            this.getDataList3();
+          }
+        })
       }).catch(() => {})
     },
     synchroHandle(){
@@ -619,8 +776,15 @@ export default {
       }).catch(() => {})
     },
     emailHandle(){
+      if (this.dataListSelections.length <= 0) {
+        return this.$message({
+          message: '请选择',
+          type: 'warning',
+          duration: 1000
+        })
+      }
       this.$http.post(
-        '/staffInfoDetail/emailNotice',this.dataList.map(item => item.infoId)
+        '/staffInfoDetail/emailNotice',this.dataListSelections.map(item => item.infoId)
       ).then(({ data: res }) => {
         if (res.code !== 0) {
             return this.$message.error(res.msg)
@@ -634,6 +798,28 @@ export default {
               this.getDataList3();
             }
           })
+      }).catch(() => {})
+    },
+    getPosition(){
+      this.$http.post(
+        '/sapApi/getPostsTree'
+      ).then(({ data: res }) => {
+        if (res.code !== 0) {
+            return this.$message.error(res.msg)
+        }else{
+          this.deptArr = res.data
+        }
+      }).catch(() => {})
+    },
+    getCostCenter(){
+      this.$http.post(
+        '/sapApi/getCostCenterTree'
+      ).then(({ data: res }) => {
+        if (res.code !== 0) {
+            return this.$message.error(res.msg)
+        }else{
+          this.deptArr = res.data
+        }
       }).catch(() => {})
     },
     importExcel(param){
@@ -653,11 +839,79 @@ export default {
         }
       })
     },
+    filterNode(value, data) {
+      if (!value) return true;
+      return data.deptName.indexOf(value) !== -1;
+    },
+    uploadFile(param){
+      let params = {
+        data: new FormData(),
+      };
+      params.data.append("file",param.file);
+      params.data.append("infoId",param.data.infoId);
+      // params.data.append("fileName",encodeURI(param.file.name));
+      this.$http.post('/staffInfoDetail/uploadEnclosure',params.data)
+        .then(res => {
+        if(res.data.code=="0"){
+            this.$message.success('上传成功！')
+            this.getDataList3()
+        }else{
+          this.$message.error(res.data.msg)
+        }
+      })
+    },
+    positionInput(val){
+      this.positionNameArr = this.positionNameArr2
+      let arr = [];
+      this.positionNameArr.map((item)=>{
+        if(item.planName.indexOf(val) != -1){
+          arr.push(item)
+        }
+      })
+      this.positionNameArr = arr;
+    },
+    recruitmentMethodChange(row){
+      if(row.recruitmentMethod == '12/内部推荐'){
+        this.getInternalReferrer(row.realName)
+      }
+    },
+    getInternalReferrer(realName){
+      let params = {
+        data: new FormData(),
+      };
+      params.data.append("name",realName);
+      this.$http.post('/sapApi/getReferrers',params.data)
+        .then(res => {
+        if(res.data.code=="0"){
+            this.internalReferrerArr = res.data.data
+        }else{
+          this.$message.error(res.data.msg)
+        }
+      })
+    },
+    selected(row, index) {
+      if (row.state == 1) {
+        return false //不可勾选
+      } else {
+        return true; //可勾选
+      }
+    },
   },
-};
+  mounted(){
+    this.getInternalReferrer()
+  },
+  watch: {
+    deptFilter(val) {
+      this.$refs.tree.filter(val);
+    }
+  },
+}
 </script>
 <style lang="css" scoped>
 .positionName:hover {
   cursor: pointer;
+}
+.inputW{
+  width:150px;
 }
 </style>

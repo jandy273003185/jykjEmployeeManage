@@ -16,6 +16,26 @@
           <ren-dept-tree v-model="dataForm.deptId" :placeholder="$t('dept.title')" :query="true"></ren-dept-tree>
         </el-form-item> -->
         <el-form-item>
+          <el-date-picker
+            v-model="dataForm.createTimeStart"
+            value-format="yyyy-MM-dd HH:mm:ss"
+            type="date"
+            placeholder="创建开始日期"
+            style="width:150px"
+          >
+          </el-date-picker>
+        </el-form-item>
+        <el-form-item>
+          <el-date-picker
+            v-model="dataForm.createTimeEnd"
+            value-format="yyyy-MM-dd HH:mm:ss"
+            type="date"
+            placeholder="创建结束日期"
+            style="width:150px"
+          >
+          </el-date-picker>
+        </el-form-item>
+        <el-form-item>
           <el-button @click="getDataList()">{{ $t("query") }}</el-button>
         </el-form-item>
         <!-- <el-form-item>
@@ -25,7 +45,16 @@
           <el-button v-if="$hasPermission('sys:user:delete')" type="danger" @click="deleteHandle()">{{ $t('deleteBatch') }}</el-button>
         </el-form-item>-->
         <el-form-item>
-          <el-button type="info" @click="exportHandle2()">批量下载</el-button>
+          <el-button type="info" @click="exportHandle2(null,'/staffInfo/export')">批量下载入职信息表</el-button>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="info" @click="exportHandle2(null,'/staffInfo/exportSum')">批量下载入职信息汇总表</el-button>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="info" @click="exportHandle2(null,'/staffInfo/downloadHeadPic')">批量下载员工头像</el-button>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="info" @click="resumeHandle()">批量打印入职信息表</el-button>
         </el-form-item>
       </el-form>
       <el-table
@@ -58,12 +87,12 @@
         >
           <template slot-scope="scope">
             <el-popover placement="top-start" trigger="click">
-              <a :href="scope.row.headUrl" target="_blank" title="查看最大化图片">
-                <img width="390" height="390" :src="scope.row.headUrl" />
+              <a :href="'api/'+scope.row.headUrl" target="_blank" title="查看最大化图片">
+                <img width="390" height="390" :src="'api/'+scope.row.headUrl" />
               </a>
               <img
                 slot="reference"
-                :src="scope.row.headUrl"
+                :src="'api/'+scope.row.headUrl"
                 style="width: 50px; height: 50px; cursor: pointer"
               />
             </el-popover>
@@ -130,8 +159,11 @@
               @click="addOrUpdateHandle(scope.row.id)"
               >查看</el-button
             >
-            <el-button type="text" size="small" @click="exportHandle2(scope.row)"
+            <el-button type="text" size="small" @click="exportHandle2(scope.row,'/staffInfo/export')"
               >下载</el-button
+            >
+            <el-button type="text" size="small"  @click="resumeHandle(scope.row.id)"
+              >打印</el-button
             >
             <!-- <el-button v-if="$hasPermission('sys:user:update')" type="text" size="small" @click="addOrUpdateHandle(scope.row.id)">{{ $t('update') }}</el-button>
             <el-button v-if="$hasPermission('sys:user:delete')" type="text" size="small" @click="deleteHandle(scope.row.id)">{{ $t('delete') }}</el-button> -->
@@ -154,6 +186,11 @@
         ref="addOrUpdate"
         @refreshDataList="getDataList"
       ></add-or-update>
+      <resume-print
+        v-if="resumeVisible"
+        ref="resume"
+        @refreshDataList="getDataList"
+      ></resume-print>
     </div>
   </el-card>
 </template>
@@ -161,6 +198,7 @@
 <script>
 import mixinViewModule from "@/mixins/view-module";
 import AddOrUpdate from "./staffInfo-add-or-update";
+import ResumePrint from './resumePrint';
 export default {
   mixins: [mixinViewModule],
   data() {
@@ -175,11 +213,22 @@ export default {
       dataForm: {
         realName: "",
       },
+      resumeVisible:false,
     };
   },
   components: {
     AddOrUpdate,
+    ResumePrint
   },
-  methods: {},
+  methods: {
+    resumeHandle(id){
+      if(this.dataList.length < 1) return;
+      this.resumeVisible = true;
+      this.$nextTick(() => {
+        this.$refs.resume.dataForm.ids = id?id:this.dataList.map(item => item.id)
+          this.$refs.resume.init()
+      })
+    }
+  },
 };
 </script>
