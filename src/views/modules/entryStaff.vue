@@ -37,14 +37,14 @@
         <el-form-item>
           <el-button @click="getDataList3()">{{ $t("query") }}</el-button>
         </el-form-item>
-        <el-form-item>
+        <!-- <el-form-item>
           <el-button
             v-if="$hasPermission('sys:role:delete')"
             type="danger"
             @click="deleteHandle3()"
             >{{ $t("deleteBatch") }}</el-button
           >
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item>
           <el-button
             v-if="$hasPermission('sys:role:save')"

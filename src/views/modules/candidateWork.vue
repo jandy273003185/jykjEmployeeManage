@@ -232,7 +232,7 @@
           label="岗位名称"
           header-align="center"
           align="center"
-          width="150"
+          width="200"
         >
           <template slot-scope="scope">
             {{scope.row.organizationPostName}}
@@ -265,7 +265,7 @@
           width="150"
         >
           <template slot-scope="scope">
-            <el-select v-model="scope.row.recruitmentMethod" placeholder="招聘类型" @change="recruitmentMethodChange(scope.row)">
+            <el-select v-model="scope.row.recruitmentMethod" placeholder="招聘类型">
               <el-option
                 v-for="item in recruitmentMethodArr"
                 :key="item"
@@ -284,12 +284,12 @@
           width="126"
         >
           <template slot-scope="scope" v-if="scope.row.recruitmentMethod == '12/内部推荐'?true:false">
-            <el-select v-model="scope.row.internalReferrer" placeholder="内部推荐人">
+            <el-select filterable remote v-model="scope.row.internalReferrer" placeholder="内部推荐人" :remote-method="internalReferrerIdRemote" @change="internalReferrerIdChange">
               <el-option
                 v-for="item in internalReferrerArr"
                 :key="item.refEmpId"
                 :label="item.refEmpInfo"
-                :value="item.refEmpId"
+                :value="item"
               >
               </el-option>
             </el-select>
@@ -317,14 +317,14 @@
           width="180"
         ></el-table-column>
          <el-table-column
-          prop="postName"
+          prop="departInterviewer"
           label="部门面试人"
           header-align="center"
           align="center"
           width="150"
         >
           <template slot-scope="scope">
-            <el-input v-model="scope.row.postName" placeholder="部门面试人" />
+            <el-input v-model="scope.row.departInterviewer" placeholder="部门面试人" />
           </template>
         </el-table-column>
       </el-table>
@@ -542,6 +542,9 @@ export default {
       if(this.title == '岗位编码'){
         this.dataList[this.row].organizationPostId = this.dataListSelections[0].planId;
         this.dataList[this.row].organizationPostName = this.dataListSelections[0].planName;
+        this.dataList[this.row].zzzh = this.dataListSelections[0].zzzh;
+        this.dataList[this.row].zzzl = this.dataListSelections[0].zzzl;
+        this.dataList[this.row].zzzrj = this.dataListSelections[0].zzzrj;
       }else{
         this.dataList[this.row].ccid = this.dataListSelections[0].ccid;
         this.dataList[this.row].costCenter = this.dataListSelections[0].ccname;
@@ -595,9 +598,6 @@ export default {
       
       this.dataList[this.row].deptId = this.dataListSelections[0].deptId;
       this.dataList[this.row].deptName = this.dataListSelections[0].deptName;
-      this.dataList[this.row].zzzh = this.dataListSelections[0].zzzh;
-      this.dataList[this.row].zzzl = this.dataListSelections[0].zzzl;
-      this.dataList[this.row].zzzrj = this.dataListSelections[0].zzzrj;
       this.positionNameVisible = false;
     },
     saveHandle(){
@@ -714,9 +714,15 @@ export default {
       })
       this.positionNameArr = arr;
     },
-    recruitmentMethodChange(row){
-      if(row.recruitmentMethod == '12/内部推荐'){
-        this.getInternalReferrer(row.realName)
+    internalReferrerIdChange(e){
+      this.dataList[this.row].internalReferrerId = e.refEmpId
+      this.dataList[this.row].internalReferrer = e.refEmpInfo
+    },
+    internalReferrerIdRemote(query){
+      if (query.length >= 2 && query.length <= 5 ) {
+        setTimeout(() => {
+          this.getInternalReferrer(query)
+        }, 200);
       }
     },
     getInternalReferrer(realName){

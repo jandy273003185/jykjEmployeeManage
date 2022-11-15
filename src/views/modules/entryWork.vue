@@ -38,14 +38,14 @@
         <el-form-item>
           <el-button @click="getDataList3()">{{ $t("query") }}</el-button>
         </el-form-item>
-        <el-form-item>
+        <!-- <el-form-item>
           <el-button
             v-if="$hasPermission('sys:role:delete')"
             type="danger"
             @click="deleteHandle3()"
             >{{ $t("deleteBatch") }}</el-button
           >
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item>
           <el-button
             v-if="$hasPermission('sys:role:save')"
@@ -73,17 +73,17 @@
         ></el-table-column>
         <el-table-column prop="reportDate" label="拟入职日期" header-align="center" align="center" width="100"></el-table-column>
         <el-table-column prop="realName" label="姓名" header-align="center" align="center" width="100"></el-table-column>
-        <el-table-column prop="corporation" label="法人公司" header-align="center" align="center" width="100"></el-table-column>
+        <el-table-column prop="corporation" label="法人公司" header-align="center" align="center" width="220"></el-table-column>
         <el-table-column prop="costCenter" label="成本中心" header-align="center" align="center" width="100"></el-table-column>
         <el-table-column prop="zzzl" label="职类" header-align="center" align="center" width="100"></el-table-column>
         <el-table-column prop="firstDeptName" label="一级组织" header-align="center" align="center" width="100"></el-table-column>
         <el-table-column prop="secondDeptName" label="二级组织" header-align="center" align="center" width="100"></el-table-column>
         <el-table-column prop="thirdDeptName" label="三级组织" header-align="center" align="center" width="100"></el-table-column>
-        <el-table-column prop="fourthDeptName" label="四级组织" header-align="center" align="center" width="100"></el-table-column>
+        <el-table-column prop="fourthDeptName" label="四级组织" header-align="center" align="center" width="220"></el-table-column>
         <el-table-column prop="staffNature" label="员工类别" header-align="center" align="center" width="100"></el-table-column>
         <el-table-column prop="realName" label="派遣公司" header-align="center" align="center" width="100"></el-table-column>
         <el-table-column prop="departInterviewer" label="部门面试人" header-align="center" align="center" width="100"></el-table-column>
-        <el-table-column prop="postName" label="岗位" header-align="center" align="center" width="100"></el-table-column>
+        <el-table-column prop="organizationPostName" label="岗位" header-align="center" align="center" width="200"></el-table-column>
       </el-table>
       <el-pagination
         :current-page="page"
