@@ -75,20 +75,47 @@ export default {
         this.dataListLoading = false
       })
     },
+    // query3 () {
+    //   this.dataListLoading = true
+    //   this.$http.post(
+    //     this.mixinViewModuleOptions.getDataListURL,
+    //     {
+         
+    //         order: this.order,
+    //         orderField: this.orderField,
+    //         page: this.mixinViewModuleOptions.getDataListIsPage ? this.page : null,
+    //         limit: this.mixinViewModuleOptions.getDataListIsPage ? this.limit : null,
+    //         staffType:this.mixinViewModuleOptions.staffType==0?0:1,
+    //         ...this.dataForm
+    //       }
+        
+    //   ).then(({ data: res }) => {
+    //     this.dataListLoading = false
+    //     if (res.code !== 0) {
+    //       this.dataList = []
+    //       this.total = 0
+    //       return this.$message.error(res.msg)
+    //     }
+    //     this.dataList = this.mixinViewModuleOptions.getDataListIsPage ? res.data.list : res.data
+    //     this.total = this.mixinViewModuleOptions.getDataListIsPage ? res.data.total : 0
+    //   }).catch(() => {
+    //     this.dataListLoading = false
+    //   })
+    // },
     query3 () {
       this.dataListLoading = true
-      this.$http.post(
+      this.$http.get(
         this.mixinViewModuleOptions.getDataListURL,
         {
-         
+          params: {
             order: this.order,
             orderField: this.orderField,
             page: this.mixinViewModuleOptions.getDataListIsPage ? this.page : null,
             limit: this.mixinViewModuleOptions.getDataListIsPage ? this.limit : null,
+            ...this.dataForm,
             staffType:this.mixinViewModuleOptions.staffType==0?0:1,
-            ...this.dataForm
           }
-        
+        }
       ).then(({ data: res }) => {
         this.dataListLoading = false
         if (res.code !== 0) {
@@ -258,7 +285,13 @@ export default {
         const aLink = document.createElement('a')
         aLink.style.display = 'none'
         aLink.href = url
-        aLink.setAttribute('download', row?row.realName+'.xlsx':(this.dataListSelections.length>1||urlInterface=='/staffInfo/downloadHeadPic'?this.dataListSelections[0].realName+'.zip':this.dataListSelections[0].realName+'.xlsx'))
+        if(urlInterface == '/staffInfo/exportSum'){
+          aLink.setAttribute('download', row?row.realName+'.xlsx':(this.dataListSelections.length>1 ?this.formatDate(new Date(),"yyyy年MM月dd日hh时mm分ss秒")+'_入职信息汇总表.xlsx':this.dataListSelections[0].realName+'_入职信息汇总表.xlsx'))
+        }else if(urlInterface == '/staffInfo/export'){
+          aLink.setAttribute('download', row?row.realName+'.xlsx':(this.dataListSelections.length>1 ?this.formatDate(new Date(),"yyyy年MM月dd日hh时mm分ss秒")+'_入职信息表.xlsx':this.dataListSelections[0].realName+'_入职信息表.xlsx'))
+        }else if(urlInterface == '/staffInfo/downloadHeadPic'){
+          aLink.setAttribute('download', row?row.realName+'.xlsx':(this.dataListSelections.length>1 ?this.formatDate(new Date(),"yyyy年MM月dd日hh时mm分ss秒")+'_员工头像表.xlsx':this.dataListSelections[0].realName+'_员工头像表.xlsx'))
+        }
         document.body.appendChild(aLink)
         aLink.click()
         document.body.removeChild(aLink)
@@ -271,6 +304,24 @@ export default {
       ).then(({ data: res }) => {
         this.dataList2 = res.data
       })
-    }
+    },
+    formatDate(objDate,fmt){ 
+      let o = {
+      　　　　"M+" : objDate.getMonth()+1, //月份
+      　　　　"d+" : objDate.getDate(), //日
+      　　　　"h+" : objDate.getHours(), //小时
+      　　　　"H+" : objDate.getHours(), //小时
+      　　　　"m+" : objDate.getMinutes(), //分
+      　　　　"s+" : objDate.getSeconds(), //秒
+      　　　　"q+" : Math.floor((objDate.getMonth()+3)/3), //季度
+      　　　　"S" : objDate.getMilliseconds() //毫秒
+      　　};
+      　　if(/(y+)/.test(fmt))
+      　　　　fmt=fmt.replace(RegExp.$1, (objDate.getFullYear()+"").substring(4 - RegExp.$1.length));
+      　　for(var k in o)
+      　　　　if(new RegExp("("+ k +")").test(fmt))
+      　　fmt = fmt.replace(RegExp.$1, (RegExp.$1.length==1) ? (o[k]) : (("00"+ o[k]).substring((""+ o[k]).length)));
+      　　return fmt;
+      } 
   }
 }

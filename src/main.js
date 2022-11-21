@@ -14,9 +14,11 @@ import renDeptTree from '@/components/ren-dept-tree'
 import renRegionTree from '@/components/ren-region-tree'
 import { hasPermission, getDictLabel } from '@/utils'
 import cloneDeep from 'lodash/cloneDeep'
+import adaptive from './directive/el-table'
 
 Vue.config.productionTip = false
 
+Vue.use(adaptive)
 Vue.use(Element, {
   size: 'default',
   i18n: (key, value) => i18n.t(key, value)

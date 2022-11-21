@@ -33,13 +33,13 @@
           <el-button @click="getDataList()">{{ $t("query") }}</el-button>
         </el-form-item>
         <el-form-item>
-          <el-button type="info" @click="exportHandle2(null,'/staffInfo/export')">批量下载入职信息表</el-button>
+          <el-button type="primary" @click="exportHandle2(null,'/staffInfo/export')">批量下载入职信息表</el-button>
         </el-form-item>
         <el-form-item>
-          <el-button type="info" @click="exportHandle2(null,'/staffInfo/exportSum')">批量下载入职信息汇总表</el-button>
+          <el-button type="primary" @click="exportHandle2(null,'/staffInfo/exportSum')">批量下载入职信息汇总表</el-button>
         </el-form-item>
         <el-form-item>
-          <el-button type="info" @click="exportHandle2(null,'/staffInfo/downloadHeadPic')">批量下载员工头像</el-button>
+          <el-button type="primary" @click="exportHandle2(null,'/staffInfo/downloadHeadPic')">批量下载员工头像</el-button>
         </el-form-item>
       </el-form>
       <el-table
@@ -131,14 +131,12 @@
         >
           <template slot-scope="scope">
             <el-button
-              v-if="$hasPermission('sys:user:update')"
               type="text"
               size="small"
               @click="addOrUpdateHandle(scope.row.id)"
-              >查看</el-button
-            >
-            <!-- <el-button v-if="$hasPermission('sys:user:update')" type="text" size="small" @click="addOrUpdateHandle(scope.row.id)">{{ $t('update') }}</el-button>
-            <el-button v-if="$hasPermission('sys:user:delete')" type="text" size="small" @click="deleteHandle(scope.row.id)">{{ $t('delete') }}</el-button> -->
+              >查看</el-button>
+              <el-button type="text" size="small" @click="exportHandle2(scope.row,'/staffInfo/export')"
+              >下载</el-button>
           </template>
         </el-table-column>
       </el-table>

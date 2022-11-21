@@ -45,16 +45,16 @@
           <el-button v-if="$hasPermission('sys:user:delete')" type="danger" @click="deleteHandle()">{{ $t('deleteBatch') }}</el-button>
         </el-form-item>-->
         <el-form-item>
-          <el-button type="info" @click="exportHandle2(null,'/staffInfo/export')">批量下载入职信息表</el-button>
+          <el-button type="primary" @click="exportHandle2(null,'/staffInfo/export')">批量下载入职信息表</el-button>
         </el-form-item>
         <el-form-item>
-          <el-button type="info" @click="exportHandle2(null,'/staffInfo/exportSum')">批量下载入职信息汇总表</el-button>
+          <el-button type="primary" @click="exportHandle2(null,'/staffInfo/exportSum')">批量下载入职信息汇总表</el-button>
         </el-form-item>
         <el-form-item>
-          <el-button type="info" @click="exportHandle2(null,'/staffInfo/downloadHeadPic')">批量下载员工头像</el-button>
+          <el-button type="primary" @click="exportHandle2(null,'/staffInfo/downloadHeadPic')">批量下载员工头像</el-button>
         </el-form-item>
         <el-form-item>
-          <el-button type="info" @click="resumeHandle()">批量打印入职信息表</el-button>
+          <el-button type="primary" @click="resumeHandle()">批量打印入职信息表</el-button>
         </el-form-item>
       </el-form>
       <el-table
@@ -65,6 +65,8 @@
         @selection-change="dataListSelectionChangeHandle"
         style="width: 100%"
       >
+      <!-- height="100px"
+        v-adaptive="{bottomOffset: 83}" -->
         <el-table-column
           type="selection"
           header-align="center"
@@ -153,7 +155,6 @@
         >
           <template slot-scope="scope">
             <el-button
-              v-if="$hasPermission('sys:user:update')"
               type="text"
               size="small"
               @click="addOrUpdateHandle(scope.row.id)"
@@ -165,9 +166,7 @@
             <el-button type="text" size="small"  @click="resumeHandle(scope.row.id)"
               >打印</el-button
             >
-            <!-- <el-button v-if="$hasPermission('sys:user:update')" type="text" size="small" @click="addOrUpdateHandle(scope.row.id)">{{ $t('update') }}</el-button>
-            <el-button v-if="$hasPermission('sys:user:delete')" type="text" size="small" @click="deleteHandle(scope.row.id)">{{ $t('delete') }}</el-button> -->
-          </template>
+             </template>
         </el-table-column>
       </el-table>
       <el-pagination
@@ -222,12 +221,19 @@ export default {
   },
   methods: {
     resumeHandle(id){
-      if(this.dataList.length < 1) return;
-      this.resumeVisible = true;
-      this.$nextTick(() => {
-        this.$refs.resume.dataForm.ids = id?id:this.dataList.map(item => item.id)
-          this.$refs.resume.init()
-      })
+      if(this.dataListSelections.length < 1 && !id){
+        return this.$message({
+          message: '请选择',
+          type: 'warning',
+          duration: 1000
+        })
+      }else{
+        this.resumeVisible = true;
+        this.$nextTick(() => {
+          this.$refs.resume.dataForm.ids = id?id:this.dataListSelections.map(item => item.id)
+            this.$refs.resume.init()
+        })
+      }
     }
   },
 };

@@ -37,7 +37,7 @@
               <i class="el-icon-arrow-down"></i>
             </span>
             <el-dropdown-menu slot="dropdown">
-              <!-- <el-dropdown-item @click.native="updatePasswordHandle()">{{ $t('updatePassword.title') }}</el-dropdown-item> -->
+              <el-dropdown-item @click.native="updatePasswordHandle()">{{ $t('updatePassword.title') }}</el-dropdown-item>
               <el-dropdown-item @click.native="logoutHandle()">{{ $t('logout') }}</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>

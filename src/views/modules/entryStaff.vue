@@ -6,7 +6,7 @@
           <el-input v-model="dataForm.realName" placeholder="姓名" clearable></el-input>
         </el-form-item>
         <el-form-item>
-          <el-select v-model="dataForm.inductionPlace" placeholder="入职地">
+          <el-select clearable v-model="dataForm.inductionPlace" placeholder="入职地">
             <el-option
               v-for="item in entryArr"
               :key="item.value"
@@ -39,7 +39,7 @@
         </el-form-item>
         <!-- <el-form-item>
           <el-button
-            v-if="$hasPermission('sys:role:delete')"
+            
             type="danger"
             @click="deleteHandle3()"
             >{{ $t("deleteBatch") }}</el-button
@@ -47,7 +47,7 @@
         </el-form-item> -->
         <el-form-item>
           <el-button
-            v-if="$hasPermission('sys:role:save')"
+            
             type="primary"
             @click="writeSAP()"
             >写入SAP</el-button
@@ -79,12 +79,12 @@
           </template>
         </el-table-column>
         <el-table-column prop="firstDeptName" label="一级组织" header-align="center" align="center" width="100"></el-table-column>
-        <el-table-column prop="secondDeptName" label="二级组织" header-align="center" align="center" width="100"></el-table-column>
-        <el-table-column prop="thirdDeptName" label="三级组织" header-align="center" align="center" width="100"></el-table-column>
-        <el-table-column prop="fourthDeptName" label="四级组织" header-align="center" align="center" width="100"></el-table-column>
-        <el-table-column prop="postName" label="个人岗位名称" header-align="center" align="center" width="120"></el-table-column>
+        <el-table-column prop="secondDeptName" label="二级组织" header-align="center" align="center" width="130"></el-table-column>
+        <el-table-column prop="thirdDeptName" label="三级组织" header-align="center" align="center" width="130"></el-table-column>
+        <el-table-column prop="fourthDeptName" label="四级组织" header-align="center" align="center" width="130"></el-table-column>
+        <el-table-column prop="postName" label="个人岗位名称" header-align="center" align="center" width="220"></el-table-column>
         <el-table-column prop="zzzh" label="职族" header-align="center" align="center" width="100"></el-table-column>
-        <el-table-column prop="corporation" label="法人公司" header-align="center" align="center" width="220"></el-table-column>
+        <el-table-column prop="corporation" label="法人公司" header-align="center" align="center" width="230"></el-table-column>
         <el-table-column prop="zzzl" label="职类" header-align="center" align="center" width="100"></el-table-column>
         <el-table-column prop="contractPeriod" label="合同期限" header-align="center" align="center" width="100"></el-table-column>
         <el-table-column prop="probationPeriod" label="试用期" header-align="center" align="center" width="100"></el-table-column>
@@ -134,6 +134,7 @@ export default {
         deleteURL: "/staffInfoDetail",
         deleteIsBatch: true,
         staffType:0,
+        source:2,
       },
       positionNameVisible: false,
       dataForm: {},
@@ -238,18 +239,18 @@ export default {
         "10/校园招聘",
         "11/社会招聘",
         "12/内部推荐",
-        "16-劳务派遣-浩鑫",
-        "18-劳务派遣-和仁",
-        "19-劳务派遣-佳鑫",
-        "21-劳务派遣-新起点",
-        "22-劳务派遣-德聚仁合",
-        "23-代理招聘-佳鑫",
-        "24-代理招聘-浩鑫",
-        "25-代理招聘-和仁",
-        "26-劳务派遣-华辉",
+        "16/劳务派遣-浩鑫",
+        "18/劳务派遣-和仁",
+        "19/劳务派遣-佳鑫",
+        "21/劳务派遣-新起点",
+        "22/劳务派遣-德聚仁合",
+        "23/代理招聘-佳鑫",
+        "24/代理招聘-浩鑫",
+        "25/代理招聘-和仁",
+        "26/劳务派遣-华辉",
         
       ],
-      employeeTypeArr: ["1/正式合同工", "2/实习员工", "5-时薪制派遣工"],
+      employeeTypeArr: ["1/正式合同工", "2/实习员工", "5/时薪制派遣工"],
       workPropertyArr: ["X/外派", "/非外派"],
       groupArr:[],
     };

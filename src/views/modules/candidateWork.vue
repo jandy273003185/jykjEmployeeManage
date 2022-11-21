@@ -6,7 +6,7 @@
           <el-input v-model="dataForm.realName" placeholder="姓名" clearable style=" width:140px"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-select v-model="dataForm.inductionPlace" placeholder="入职地" style=" width:140px">
+          <el-select clearable v-model="dataForm.inductionPlace" placeholder="入职地" style=" width:140px">
             <el-option
               v-for="item in entryArr"
               :key="item.value"
@@ -38,6 +38,7 @@
         </el-form-item>
         <el-form-item>
           <el-select
+            clearable
             v-model="dataForm.inductionStatus"
             placeholder="入职状态"
             style=" width:140px"
@@ -52,7 +53,7 @@
         </el-form-item>
         <el-form-item>
           <el-button
-            v-if="$hasPermission('sys:role:delete')"
+            
             type="danger"
             @click="deleteHandle3()"
             >放弃入职</el-button
@@ -60,7 +61,7 @@
         </el-form-item>
         <el-form-item>
           <el-button
-            v-if="$hasPermission('sys:role:save')"
+            
             type="primary"
             @click="saveHandle()"
             >保存</el-button
@@ -68,13 +69,13 @@
         </el-form-item>
         <el-form-item>
           <el-button
-            v-if="$hasPermission('sys:role:save')"
+            
             type="primary"
             @click="synchroHandle()"
             >同步SAP</el-button
           >
         </el-form-item>
-        <!-- <el-form-item>
+        <el-form-item>
           <el-upload 
               action="" 
               :multiple="true"
@@ -82,7 +83,7 @@
               :show-file-list="false">
               <el-button type="primary" icon="el-icon-upload" >导入</el-button>
           </el-upload>
-        </el-form-item> -->
+        </el-form-item>
       </el-form>
       <el-table
         v-loading="dataListLoading"
@@ -111,7 +112,7 @@
           width="180"
         >
           <template slot-scope="scope">
-            <el-select v-model="scope.row.corporation" placeholder="法人公司">
+            <el-select clearable v-model="scope.row.corporation" placeholder="法人公司">
               <el-option
                 v-for="item in corporationArr"
                 :key="item.value"
@@ -130,7 +131,7 @@
           width="180"
         >
           <template slot-scope="scope">
-            <el-select v-model="scope.row.inductionPlace" placeholder="入职地">
+            <el-select clearable v-model="scope.row.inductionPlace" placeholder="入职地">
               <el-option
                 v-for="item in entryArr"
                 :key="item.value"
@@ -206,6 +207,7 @@
               type="date"
               placeholder="选择日期"
               style="width: 150px"
+              value-format="yyyy-MM-dd"
             >
             </el-date-picker>
           </template>
@@ -246,7 +248,7 @@
           width="150"
         >
           <template slot-scope="scope">
-            <el-select v-model="scope.row.staffNature" placeholder="员工类型">
+            <el-select clearable v-model="scope.row.staffNature" placeholder="员工类型">
               <el-option
                 v-for="item in employeeTypeArr"
                 :key="item"
@@ -265,7 +267,7 @@
           width="150"
         >
           <template slot-scope="scope">
-            <el-select v-model="scope.row.recruitmentMethod" placeholder="招聘类型">
+            <el-select clearable v-model="scope.row.recruitmentMethod" placeholder="招聘类型">
               <el-option
                 v-for="item in recruitmentMethodArr"
                 :key="item"
@@ -283,8 +285,8 @@
           align="center"
           width="126"
         >
-          <template slot-scope="scope" v-if="scope.row.recruitmentMethod == '12/内部推荐'?true:false">
-            <el-select filterable remote v-model="scope.row.internalReferrer" placeholder="内部推荐人" :remote-method="internalReferrerIdRemote" @change="internalReferrerIdChange">
+          <template slot-scope="scope" v-if="(scope.row.recruitmentMethod == '12/内部推荐'?true:false)&&scope.row.internalReferrer">
+            <!-- <el-select clearable filterable remote v-model="scope.row.internalReferrer" placeholder="内部推荐人" :remote-method="internalReferrerIdRemote" @change="internalReferrerIdChange">
               <el-option
                 v-for="item in internalReferrerArr"
                 :key="item.refEmpId"
@@ -292,7 +294,8 @@
                 :value="item"
               >
               </el-option>
-            </el-select>
+            </el-select> -->
+            {{scope.row.internalReferrerId+'-'+scope.row.internalReferrer}}
           </template>
         </el-table-column>
         <el-table-column
@@ -303,7 +306,7 @@
           width="130"
         >
           <template slot-scope="scope">
-            <el-select v-model="scope.row.rank" placeholder="职工职级">
+            <el-select clearable v-model="scope.row.rank" placeholder="职工职级">
               <el-option v-for="item in jobArr" :key="item" :label="item" :value="item">
               </el-option>
             </el-select>
@@ -378,13 +381,22 @@
                 v-if="title == '岗位编码'"
                 prop="planName"
                 label="岗位"
-              ></el-table-column>
+              >
+                <template slot-scope="scope">{{scope.row.planName+'('+scope.row.planId+')'}}</template>
+              </el-table-column>
               <el-table-column
                 v-else
                 prop="ccname"
                 label="成本中心"
-              ></el-table-column>
+              >
+                <template slot-scope="scope">{{scope.row.ccname+'('+scope.row.ccid+')'}}</template>
+              </el-table-column>
             </el-table>
+            <div v-if="title != '岗位编码'" style="color:red;margin:10px 0 -10px 0">如果选不到成本中心,可在以下栏位直接输入</div>
+            <div class="demo-input-suffix" v-if="title != '岗位编码' && !dataListSelections[0]">
+                编码： <el-input type="number" min="0" @blur="ccidBlur" oninput="if(value.length>10)value=value.slice(0,10)" onkeyup="value=value.replace(/[^\d]/g,'');" v-model="ccid" style="margin-top:20px;margin-right:24px;width:40%" />
+                名称： <el-input v-model="costCenter" style="margin-top:20px;width:40%"/>
+            </div>
           </div>
         </div>
         <template slot="footer">
@@ -409,6 +421,7 @@ export default {
         deleteURL: "/staffInfoDetail",
         deleteIsBatch: true,
         staffType:1,
+        source:1,
       },
       positionNameVisible: false,
       dataForm: {},
@@ -489,29 +502,30 @@ export default {
       },
       row: 0,
       jobArr: ["1级","2级","3级","4级","5级","6级","7级","8级","9级","10级", "R3", "R4", "R5",],
-      contractPeriodArr: ["3个月", "6个月", "1年", "2年", "3年", "4年"],
       recruitmentMethodArr: [
         "10/校园招聘",
         "11/社会招聘",
         "12/内部推荐",
-        "16-劳务派遣-浩鑫",
-        "18-劳务派遣-和仁",
-        "19-劳务派遣-佳鑫",
-        "21-劳务派遣-新起点",
-        "22-劳务派遣-德聚仁合",
-        "23-代理招聘-佳鑫",
-        "24-代理招聘-浩鑫",
-        "25-代理招聘-和仁",
-        "26-劳务派遣-华辉",
+        "16/劳务派遣-浩鑫",
+        "18/劳务派遣-和仁",
+        "19/劳务派遣-佳鑫",
+        "21/劳务派遣-新起点",
+        "22/劳务派遣-德聚仁合",
+        "23/代理招聘-佳鑫",
+        "24/代理招聘-浩鑫",
+        "25/代理招聘-和仁",
+        "26/劳务派遣-华辉",
         
       ],
-      employeeTypeArr: ["1/正式合同工", "2/实习员工", "5-时薪制派遣工"],
+      employeeTypeArr: ["1/正式合同工", "2/实习员工", "5/时薪制派遣工"],
       workPropertyArr: ["X/外派", "/非外派"],
       positionNameArr:[],
       positionNameArr2:[],
       deptFilter:'',
       positionFilter:'',
       internalReferrerArr:[],
+      costCenter:'',
+      ccid:'',
     };
   },
   methods: {
@@ -539,66 +553,102 @@ export default {
       }
     },
     positionConfirm(){
+      let _firstDeptId = null;
+      let _secondDeptId = null;
+      let _thirdDeptId = null;
       if(this.title == '岗位编码'){
-        this.dataList[this.row].organizationPostId = this.dataListSelections[0].planId;
-        this.dataList[this.row].organizationPostName = this.dataListSelections[0].planName;
         this.dataList[this.row].zzzh = this.dataListSelections[0].zzzh;
         this.dataList[this.row].zzzl = this.dataListSelections[0].zzzl;
         this.dataList[this.row].zzzrj = this.dataListSelections[0].zzzrj;
-      }else{
-        this.dataList[this.row].ccid = this.dataListSelections[0].ccid;
-        this.dataList[this.row].costCenter = this.dataListSelections[0].ccname;
-      }
-
-      let _firstDeptId = null;
-      let _secondDeptId = null;
-      this.deptArr.map((first)=>{
-        if(first.childrenDept.length > 0){
-          first.childrenDept.map((second)=>{
-            if(second.childrenDept.length > 0){
-              second.childrenDept.map((third)=>{
-                // console.log(third.deptId+'------'+this.dataListSelections[0].deptId)
-                if(third.deptId == this.dataListSelections[0].deptId){
-                  // console.log(third.parentDeptId);
-                  _secondDeptId = third.parentDeptId//三级组织
-                  this.dataList[this.row].thirdDeptId = this.dataListSelections[0].deptId
-                  this.dataList[this.row].thirdDeptName = this.dataListSelections[0].deptName//三级组织
-                  if(this.title == '岗位编码'){
-                    this.dataList[this.row].fourthDeptId = this.dataListSelections[0].planId
-                    this.dataList[this.row].fourthDeptName = this.dataListSelections[0].planName//四级组织
-                  // }else{
-                  //   this.dataList[this.row].fourthDeptId = this.dataListSelections[0].ccid
-                  //   this.dataList[this.row].fourthDeptName = this.dataListSelections[0].ccname//四级组织
-                  }
-                }
-              })
-            }
-          })
-        }
-      })
-      this.deptArr.map((first)=>{
-        if(first.childrenDept.length > 0){
-          first.childrenDept.map((second)=>{
-            if(second.childrenDept.length > 0){
-              if(second.deptId == _secondDeptId){
-                _firstDeptId = second.parentDeptId
-                this.dataList[this.row].secondDeptId = second.deptId
-                this.dataList[this.row].secondDeptName = second.deptName//二级组织
+        this.deptArr.map((first)=>{
+          if(first.childrenDept.length > 0){
+            first.childrenDept.map((second)=>{
+              if(second.deptId == this.dataListSelections[0].deptId){
+                _firstDeptId = second.parentDeptId//一级组织
+                _secondDeptId = second.deptId//二级组织
               }
+              if(second.childrenDept.length > 0){
+                second.childrenDept.map((third)=>{
+                  if(third.childrenDept.length == 0){
+                    if(third.deptId == this.dataListSelections[0].deptId){
+                      let thirdDeptId = third.deptId;
+                      _secondDeptId = third.parentDeptId//二级组织
+                      this.dataList[this.row].thirdDeptId = third.deptId
+                      this.dataList[this.row].thirdDeptName = third.deptName//三级组织
+                      this.dataList[this.row].fourthDeptId = this.dataListSelections[0].planId
+                      this.dataList[this.row].fourthDeptName = this.dataListSelections[0].planName
+                      third.childrenDept.map((four)=>{
+                        if(four.deptId == this.dataListSelections[0].deptId){
+                          _thirdDeptId = thirdDeptId//三级组织
+                          this.dataList[this.row].fourthDeptId = four.deptId
+                          this.dataList[this.row].fourthDeptName = four.deptName//四级组织
+                            // this.dataList[this.row].deptId = this.dataListSelections[0].planId
+                            // this.dataList[this.row].deptName = this.dataListSelections[0].planName//五级组织
+                        }
+                      })
+                    }
+                  }else{
+                      third.childrenDept.map((four)=>{
+                        if(four.deptId == this.dataListSelections[0].deptId){
+                          let thirdDeptId = four.parentDeptId;
+                          _secondDeptId = third.parentDeptId//二级组织
+                          this.dataList[this.row].thirdDeptId = third.deptId
+                          this.dataList[this.row].thirdDeptName = third.deptName//三级组织
+
+                          _thirdDeptId = thirdDeptId//三级组织
+                          this.dataList[this.row].fourthDeptId = four.deptId
+                          this.dataList[this.row].fourthDeptName = four.deptName//四级组织
+                        }
+                      })
+                  }
+                })
+              }else{
+                // this.dataList[this.row].thirdDeptId = this.dataListSelections[0].planId
+                // this.dataList[this.row].thirdDeptName = this.dataListSelections[0].planName//三级组织
+              }
+            })
+          }
+        })
+        this.deptArr.map((first)=>{
+          if(first.childrenDept.length > 0){
+            first.childrenDept.map((second)=>{
+              // if(second.childrenDept.length > 0){
+                if(second.deptId == _secondDeptId){
+                  _firstDeptId = second.parentDeptId
+                  this.dataList[this.row].secondDeptId = second.deptId
+                  this.dataList[this.row].secondDeptName = second.deptName//二级组织
+                }
+              // }
+            })
+          }
+        })
+        this.deptArr.map((first)=>{
+          if(first.deptId == _firstDeptId){
+            this.dataList[this.row].firstDeptId = first.deptId
+            this.dataList[this.row].firstDeptName = first.deptName//一级组织
+          }
+        })
+
+        this.dataList[this.row].organizationPostId = this.dataListSelections[0].planId;
+        this.dataList[this.row].organizationPostName = this.dataListSelections[0].planName;
+      }else{
+        if(this.dataListSelections[0]){
+          this.dataList[this.row].ccid =  this.dataListSelections[0].ccid;
+          this.dataList[this.row].costCenter =  this.dataListSelections[0].ccname;
+        }else{
+          if(this.ccid){
+            if(!this.costCenter){
+              return this.$message.error('请输入名称')
             }
-          })
+          }
+          this.dataList[this.row].ccid =  this.ccid ;
+          this.dataList[this.row].costCenter =  this.costCenter;
         }
-      })
-      this.deptArr.map((first)=>{
-        if(first.deptId == _firstDeptId){
-          this.dataList[this.row].firstDeptId = first.deptId
-          this.dataList[this.row].firstDeptName = first.deptName//一级组织
-        }
-      })
+        
+      }
       
-      this.dataList[this.row].deptId = this.dataListSelections[0].deptId;
-      this.dataList[this.row].deptName = this.dataListSelections[0].deptName;
       this.positionNameVisible = false;
+      // console.log(this.dataList[this.row]);
     },
     saveHandle(){
       if (this.dataListSelections.length <= 0) {
@@ -744,6 +794,11 @@ export default {
         return false //不可勾选
       } else {
         return true; //可勾选
+      }
+    },
+    ccidBlur(){
+      if(this.ccid.length != 10){
+        return this.$message.error('请输入10位纯数字')
       }
     },
   },

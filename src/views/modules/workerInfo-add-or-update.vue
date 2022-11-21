@@ -185,15 +185,15 @@
       >
         <el-input v-model="dataForm.secrecyAgreement == 0 ? '否' : '是'"></el-input>
       </el-form-item>
-      <el-form-item prop="recruiter" label="招聘人姓名">
-        <el-input v-model="dataForm.recruiter"></el-input>
+      <el-form-item prop="inductionMode" label="入职方式">
+        <el-input v-model="dataForm.inductionMode"></el-input>
       </el-form-item>
-      <!-- <el-form-item prop="status" :label="$t('user.status')" size="mini">
-        <el-radio-group v-model="dataForm.status">
-          <el-radio :label="0">{{ $t('user.status0') }}</el-radio>
-          <el-radio :label="1">{{ $t('user.status1') }}</el-radio>
-        </el-radio-group>
-      </el-form-item> -->
+      <el-form-item prop="referrerEmpno" label="内推人工号">
+        <el-input v-model="dataForm.referrerEmpno"></el-input>
+      </el-form-item>
+      <el-form-item prop="referrer" label="内推人姓名">
+        <el-input v-model="dataForm.referrer"></el-input>
+      </el-form-item>
     </el-form>
     <template slot="footer">
       <el-button @click="visible = false">关闭</el-button>

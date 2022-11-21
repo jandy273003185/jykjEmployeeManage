@@ -6,7 +6,7 @@
           <el-input class="inputW" v-model="dataForm.realName" placeholder="姓名" clearable></el-input>
         </el-form-item>
         <el-form-item>
-          <el-select class="inputW" v-model="dataForm.inductionPlace" placeholder="入职地">
+          <el-select clearable class="inputW" v-model="dataForm.inductionPlace" placeholder="入职地">
             <el-option
               v-for="item in entryArr"
               :key="item.value"
@@ -49,6 +49,7 @@
         </el-form-item>
         <el-form-item>
           <el-select
+            clearable
             v-model="dataForm.noticeStatus"
             placeholder="提醒状态"
             class="inputW"
@@ -59,6 +60,7 @@
         </el-form-item>
         <el-form-item>
           <el-select
+            clearable
             v-model="dataForm.inductionStatus"
             placeholder="入职状态"
              class="inputW"
@@ -73,7 +75,7 @@
         </el-form-item>
         <el-form-item>
           <el-button
-            v-if="$hasPermission('sys:role:delete')"
+            
             type="danger"
             @click="deleteHandle3()"
             >放弃入职</el-button
@@ -81,7 +83,7 @@
         </el-form-item>
         <el-form-item>
           <el-button
-            v-if="$hasPermission('sys:role:save')"
+            
             type="primary"
             @click="saveHandle()"
             >保存</el-button
@@ -89,7 +91,7 @@
         </el-form-item>
         <el-form-item>
           <el-button
-            v-if="$hasPermission('sys:role:save')"
+            
             type="primary"
             @click="synchroHandle()"
             >同步SAP</el-button
@@ -97,7 +99,7 @@
         </el-form-item>
         <el-form-item>
           <el-button
-            v-if="$hasPermission('sys:role:save')"
+            
             type="primary"
             @click="emailHandle()"
             >发起OA入职流程提醒邮件</el-button
@@ -157,6 +159,7 @@
               type="date"
               placeholder="选择日期"
               style="width: 150px"
+              value-format="yyyy-MM-dd"
             >
             </el-date-picker>
           </template>
@@ -181,7 +184,7 @@
           width="180"
         >
           <template slot-scope="scope">
-            <el-select v-model="scope.row.inductionPlace" placeholder="入职地">
+            <el-select clearable v-model="scope.row.inductionPlace" placeholder="入职地">
               <el-option
                 v-for="item in entryArr"
                 :key="item.value"
@@ -200,7 +203,7 @@
           width="180"
         >
           <template slot-scope="scope">
-            <el-select v-model="scope.row.corporation" placeholder="法人公司">
+            <el-select clearable v-model="scope.row.corporation" placeholder="法人公司">
               <el-option
                 v-for="item in corporationArr"
                 :key="item.value"
@@ -247,7 +250,7 @@
           width="130"
         >
           <template slot-scope="scope">
-            <el-select v-model="scope.row.rank" placeholder="个人职级">
+            <el-select clearable v-model="scope.row.rank" placeholder="个人职级">
               <el-option v-for="item in jobArr" :key="item" :label="item" :value="item">
               </el-option>
             </el-select>
@@ -261,7 +264,7 @@
           width="130"
         >
           <template slot-scope="scope">
-            <el-select
+            <el-select clearable
               v-model="scope.row.contractPeriod"
               placeholder="合同期限"
             >
@@ -283,7 +286,7 @@
           width="120"
         >
           <template slot-scope="scope">
-            <el-select v-model="scope.row.probationPeriod" placeholder="试用期">
+            <el-select clearable v-model="scope.row.probationPeriod" placeholder="试用期">
               <el-option
                 v-for="item in probationArr"
                 :key="item"
@@ -302,7 +305,7 @@
           width="166"
         >
           <template slot-scope="scope">
-            <el-select
+            <el-select clearable
               multiple
               v-model="scope.row.laborContractWorkplace"
               placeholder="劳动合同工作地"
@@ -325,7 +328,7 @@
           width="160"
         >
           <template slot-scope="scope">
-            <el-select v-model="scope.row.actualWorkingPlace" placeholder="实际工作地">
+            <el-select clearable v-model="scope.row.actualWorkingPlace" placeholder="实际工作地">
               <el-option
                 v-for="item in entryArr"
                 :key="item.value"
@@ -375,7 +378,7 @@
           width="150"
         >
           <template slot-scope="scope">
-            <el-select v-model="scope.row.recruitmentMethod" placeholder="招聘类型">
+            <el-select clearable v-model="scope.row.recruitmentMethod" placeholder="招聘类型">
               <el-option
                 v-for="item in recruitmentMethodArr"
                 :key="item"
@@ -394,7 +397,7 @@
           width="126"
         >
           <template slot-scope="scope" v-if="scope.row.recruitmentMethod == '12/内部推荐'?true:false">
-            <el-select filterable remote v-model="scope.row.internalReferrer" placeholder="内部推荐人" :remote-method="internalReferrerIdRemote" @change="internalReferrerIdChange">
+            <el-select clearable filterable remote v-model="scope.row.internalReferrer" placeholder="内部推荐人" :remote-method="internalReferrerIdRemote" @change="internalReferrerIdChange">
               <el-option
                 v-for="item in internalReferrerArr"
                 :key="item.refEmpId"
@@ -413,7 +416,7 @@
           width="150"
         >
           <template slot-scope="scope">
-            <el-select v-model="scope.row.staffNature" placeholder="员工类型">
+            <el-select clearable v-model="scope.row.staffNature" placeholder="员工类型">
               <el-option
                 v-for="item in employeeTypeArr"
                 :key="item"
@@ -432,7 +435,7 @@
           width="150"
         >
           <template slot-scope="scope">
-            <el-select v-model="scope.row.jobNature" placeholder="工作性质">
+            <el-select clearable v-model="scope.row.jobNature" placeholder="工作性质">
               <el-option
                 v-for="item in workPropertyArr"
                 :key="item"
@@ -444,21 +447,25 @@
           </template>
         </el-table-column>
         <el-table-column
-          :label="$t('handle')"
+          label="附件"
           fixed="right"
           header-align="center"
           align="center"
-          width="130"
+          width="208"
         >
           <template slot-scope="scope">
-            <el-upload 
-              action="" 
-              :multiple="true"
-              :http-request="uploadFile"
-              :data="{infoId:scope.row.infoId}"
-              :show-file-list="false">
-              <el-button style="width:88px;" type="primary" >上传附件</el-button>
-          </el-upload>
+            <div style="display:flex">
+              <el-upload
+                action="" 
+                :multiple="true"
+                :http-request="uploadFile"
+                :data="{infoId:scope.row.infoId}"
+                :show-file-list="false">
+                <el-button  type="primary" >上传附件</el-button>
+              </el-upload>
+              <el-button v-if="scope.row.enclosurePath" :title="scope.row.enclosurePath" style="margin-left:10px;width:80px;padding:0 10px;overflow:hidden;" type="primary" size="small"  @click="downHandle(scope.row.enclosurePath)"
+                >{{scope.row.enclosurePath}}</el-button>
+            </div>
           </template>
         </el-table-column>
       </el-table>
@@ -512,18 +519,56 @@
                 v-if="title == '编制岗位名称'"
                 prop="planName"
                 label="岗位"
-              ></el-table-column>
+              >
+                <template slot-scope="scope">{{scope.row.planName+'('+scope.row.planId+')'}}</template>
+              </el-table-column>
               <el-table-column
                 v-else
                 prop="ccname"
                 label="成本中心"
-              ></el-table-column>
+              >
+                <template slot-scope="scope">{{scope.row.ccname+'('+scope.row.ccid+')'}}</template>
+              </el-table-column>
             </el-table>
+            <div v-if="title != '编制岗位名称'" style="color:red;margin:10px 0 -10px 0">如果选不到成本中心,可在以下栏位直接输入</div>
+            <div class="demo-input-suffix" v-if="title != '编制岗位名称' && !dataListSelections[0]">
+                编码： <el-input type="number" min="0" @blur="ccidBlur" oninput="if(value.length>10)value=value.slice(0,10)" onkeyup="value=value.replace(/[^\d]/g,'');" v-model="ccid" style="margin-top:20px;margin-right:24px;width:40%" />
+                名称： <el-input v-model="costCenter" style="margin-top:20px;width:40%"/>
+            </div>
           </div>
         </div>
-        <template slot="footer">
+        <template slot="footer" >
             <el-button @click="positionNameVisible = false">{{ $t('cancel') }}</el-button>
             <el-button type="primary" @click="positionConfirm()">{{ $t('confirm') }}</el-button>
+          </template>
+      </el-dialog>
+      <el-dialog
+        title="请选择下载内容"
+        :visible.sync="downVisible"
+        width="50%"
+        :modal="false"
+        :close-on-click-modal="false"
+        :close-on-press-escape="false"
+      >
+        <el-table
+          :data="downFileArr"
+          border
+          @selection-change="dataListSelectionChangeHandle"
+          ref="tb"
+        >
+          <el-table-column
+            type="selection"
+            header-align="center"
+            align="center"
+            width="50"
+          ></el-table-column>
+          <el-table-column label="文件名称">
+            <template slot-scope="scope">{{scope.row}}</template>
+          </el-table-column>
+        </el-table>
+        <template slot="footer" >
+            <el-button @click="downVisible = false">{{ $t('cancel') }}</el-button>
+            <el-button type="primary" @click="downFileConfirm()">{{ $t('confirm') }}</el-button>
           </template>
       </el-dialog>
     </div>
@@ -543,6 +588,7 @@ export default {
         deleteURL: "/staffInfoDetail",
         deleteIsBatch: true,
         staffType:0,
+        source:1,
       },
       positionNameVisible: false,
       dataForm: {},
@@ -644,10 +690,16 @@ export default {
       deptFilter:'',
       positionFilter:'',
       internalReferrerArr:[],
+      costCenter:'',
+      ccid:'',
+      downVisible:false,
+      downFileArr:[],
     };
   },
   methods: {
     positionNameClick(data) {
+      this.ccid = '';
+      this.costCenter = '';
       this.row = data.$index;
       this.title = data.column.label
       this.positionNameVisible = true;
@@ -671,66 +723,101 @@ export default {
       }
     },
     positionConfirm(){
+      let _firstDeptId = null;
+      let _secondDeptId = null;
+      let _thirdDeptId = null;
       if(this.title == '编制岗位名称'){
-        this.dataList[this.row].organizationPostId = this.dataListSelections[0].planId;
-        this.dataList[this.row].organizationPostName = this.dataListSelections[0].planName;
         this.dataList[this.row].zzzh = this.dataListSelections[0].zzzh;
         this.dataList[this.row].zzzl = this.dataListSelections[0].zzzl;
         this.dataList[this.row].zzzrj = this.dataListSelections[0].zzzrj;
-      }else{
-        this.dataList[this.row].ccid = this.dataListSelections[0].ccid;
-        this.dataList[this.row].costCenter = this.dataListSelections[0].ccname;
-      }
-
-      let _firstDeptId = null;
-      let _secondDeptId = null;
-      this.deptArr.map((first)=>{
-        if(first.childrenDept.length > 0){
-          first.childrenDept.map((second)=>{
-            if(second.childrenDept.length > 0){
-              second.childrenDept.map((third)=>{
-                // console.log(third.deptId+'------'+this.dataListSelections[0].deptId)
-                if(third.deptId == this.dataListSelections[0].deptId){
-                  // console.log(third.parentDeptId);
-                  _secondDeptId = third.parentDeptId//三级组织
-                  this.dataList[this.row].thirdDeptId = this.dataListSelections[0].deptId
-                  this.dataList[this.row].thirdDeptName = this.dataListSelections[0].deptName//三级组织
-                  if(this.title == '编制岗位名称'){
-                    this.dataList[this.row].fourthDeptId = this.dataListSelections[0].planId
-                    this.dataList[this.row].fourthDeptName = this.dataListSelections[0].planName//四级组织
-                  // }else{
-                  //   this.dataList[this.row].fourthDeptId = this.dataListSelections[0].ccid
-                  //   this.dataList[this.row].fourthDeptName = this.dataListSelections[0].ccname//四级组织
-                  }
-                }
-              })
-            }
-          })
-        }
-      })
-      this.deptArr.map((first)=>{
-        if(first.childrenDept.length > 0){
-          first.childrenDept.map((second)=>{
-            if(second.childrenDept.length > 0){
-              if(second.deptId == _secondDeptId){
-                _firstDeptId = second.parentDeptId
-                this.dataList[this.row].secondDeptId = second.deptId
-                this.dataList[this.row].secondDeptName = second.deptName//二级组织
+        this.deptArr.map((first)=>{
+          if(first.childrenDept.length > 0){
+            first.childrenDept.map((second)=>{
+              if(second.deptId == this.dataListSelections[0].deptId){
+                _firstDeptId = second.parentDeptId//一级组织
+                _secondDeptId = second.deptId//二级组织
               }
+              if(second.childrenDept.length > 0){
+                second.childrenDept.map((third)=>{
+                  if(third.childrenDept.length == 0){
+                    if(third.deptId == this.dataListSelections[0].deptId){
+                      let thirdDeptId = third.deptId;
+                      _secondDeptId = third.parentDeptId//二级组织
+                      this.dataList[this.row].thirdDeptId = third.deptId
+                      this.dataList[this.row].thirdDeptName = third.deptName//三级组织
+                      this.dataList[this.row].fourthDeptId = this.dataListSelections[0].planId
+                      this.dataList[this.row].fourthDeptName = this.dataListSelections[0].planName
+                      third.childrenDept.map((four)=>{
+                        if(four.deptId == this.dataListSelections[0].deptId){
+                          _thirdDeptId = thirdDeptId//三级组织
+                          this.dataList[this.row].fourthDeptId = four.deptId
+                          this.dataList[this.row].fourthDeptName = four.deptName//四级组织
+                            // this.dataList[this.row].deptId = this.dataListSelections[0].planId
+                            // this.dataList[this.row].deptName = this.dataListSelections[0].planName//五级组织
+                        }
+                      })
+                    }
+                  }else{
+                      third.childrenDept.map((four)=>{
+                        if(four.deptId == this.dataListSelections[0].deptId){
+                          let thirdDeptId = four.parentDeptId;
+                          _secondDeptId = third.parentDeptId//二级组织
+                          this.dataList[this.row].thirdDeptId = third.deptId
+                          this.dataList[this.row].thirdDeptName = third.deptName//三级组织
+
+                          _thirdDeptId = thirdDeptId//三级组织
+                          this.dataList[this.row].fourthDeptId = four.deptId
+                          this.dataList[this.row].fourthDeptName = four.deptName//四级组织
+                        }
+                      })
+                  }
+                })
+              }else{
+                // this.dataList[this.row].thirdDeptId = this.dataListSelections[0].planId
+                // this.dataList[this.row].thirdDeptName = this.dataListSelections[0].planName//三级组织
+              }
+            })
+          }
+        })
+        this.deptArr.map((first)=>{
+          if(first.childrenDept.length > 0){
+            first.childrenDept.map((second)=>{
+              // if(second.childrenDept.length > 0){
+                if(second.deptId == _secondDeptId){
+                  _firstDeptId = second.parentDeptId
+                  this.dataList[this.row].secondDeptId = second.deptId
+                  this.dataList[this.row].secondDeptName = second.deptName//二级组织
+                }
+              // }
+            })
+          }
+        })
+        this.deptArr.map((first)=>{
+          if(first.deptId == _firstDeptId){
+            this.dataList[this.row].firstDeptId = first.deptId
+            this.dataList[this.row].firstDeptName = first.deptName//一级组织
+          }
+        })
+
+        this.dataList[this.row].organizationPostId = this.dataListSelections[0].planId;
+        this.dataList[this.row].organizationPostName = this.dataListSelections[0].planName;
+      }else{
+        if(this.dataListSelections[0]){
+          this.dataList[this.row].ccid =  this.dataListSelections[0].ccid;
+          this.dataList[this.row].costCenter =  this.dataListSelections[0].ccname;
+        }else{
+          if(this.ccid){
+            if(!this.costCenter){
+              return this.$message.error('请输入名称')
             }
-          })
+          }
+          this.dataList[this.row].ccid =  this.ccid ;
+          this.dataList[this.row].costCenter =  this.costCenter;
         }
-      })
-      this.deptArr.map((first)=>{
-        if(first.deptId == _firstDeptId){
-          this.dataList[this.row].firstDeptId = first.deptId
-          this.dataList[this.row].firstDeptName = first.deptName//一级组织
-        }
-      })
-      
-      this.dataList[this.row].deptId = this.dataListSelections[0].deptId;
-      this.dataList[this.row].deptName = this.dataListSelections[0].deptName;
+        
+      }
       this.positionNameVisible = false;
+      // console.log(this.dataList[this.row]);
     },
     
     saveHandle(){
@@ -907,8 +994,44 @@ export default {
         return true; //可勾选
       }
     },
+    ccidBlur(){
+      if(this.ccid.length != 10){
+        return this.$message.error('请输入10位纯数字')
+      }
+    },
+    downHandle(val){
+      this.downFileArr = val.split(',');
+      this.downVisible = true;
+    },
+    downFileConfirm(){
+      let params = {
+        data: new FormData(),
+      };
+      params.data.append("fileNames",this.dataListSelections);
+      this.$http.post('/staffInfoDetail/downloadEnclosure',params.data,{ responseType: 'blob' })
+        .then(({ data: res }) => {
+          const url = window.URL.createObjectURL(new Blob([res]))
+          const aLink = document.createElement('a')
+          aLink.style.display = 'none'
+          aLink.href = url
+          aLink.setAttribute('download', this.dataListSelections.length > 1?'附件.zip':this.dataListSelections[0]+'.zip')
+          document.body.appendChild(aLink)
+          aLink.click()
+          document.body.removeChild(aLink)
+          window.URL.revokeObjectURL(url)
+          this.downVisible = false;
+      })
+    },
   },
   mounted(){
+    setTimeout(()=>{
+      this.dataList.map((item)=>{
+        this.$nextTick(()=>{
+          item.contractPeriod = '4年'
+          item.probationPeriod = '3'
+        })
+      }) 
+    },3000)
     this.getInternalReferrer()
   },
   watch: {
