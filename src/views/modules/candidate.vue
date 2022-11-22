@@ -215,6 +215,20 @@
           </template>
         </el-table-column>
         <el-table-column
+          prop="returnPost"
+          label="是否离职补岗"
+          header-align="center"
+          align="center"
+          width="180"
+        >
+          <template slot-scope="scope">
+            <el-select clearable v-model="scope.row.returnPost" placeholder="是否离职补岗">
+              <el-option value="" label="否"></el-option>
+              <el-option value="X" label="是"></el-option>
+            </el-select>
+          </template>
+        </el-table-column>
+        <el-table-column
           prop="organizationPostName"
           label="编制岗位名称"
           header-align="center"
@@ -1014,7 +1028,7 @@ export default {
           const aLink = document.createElement('a')
           aLink.style.display = 'none'
           aLink.href = url
-          aLink.setAttribute('download', this.dataListSelections.length > 1?'附件.zip':this.dataListSelections[0]+'.zip')
+          aLink.setAttribute('download', this.dataListSelections.length > 1?this.formatDate(new Date(),"yyyy年MM月dd日hh时mm分ss秒")+'_附件.zip':this.dataListSelections[0]+'.zip')
           document.body.appendChild(aLink)
           aLink.click()
           document.body.removeChild(aLink)
@@ -1029,6 +1043,7 @@ export default {
         this.$nextTick(()=>{
           item.contractPeriod = '4年'
           item.probationPeriod = '3'
+          item.returnPost = ''
         })
       }) 
     },3000)

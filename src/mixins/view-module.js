@@ -288,9 +288,9 @@ export default {
         if(urlInterface == '/staffInfo/exportSum'){
           aLink.setAttribute('download', row?row.realName+'.xlsx':(this.dataListSelections.length>1 ?this.formatDate(new Date(),"yyyy年MM月dd日hh时mm分ss秒")+'_入职信息汇总表.xlsx':this.dataListSelections[0].realName+'_入职信息汇总表.xlsx'))
         }else if(urlInterface == '/staffInfo/export'){
-          aLink.setAttribute('download', row?row.realName+'.xlsx':(this.dataListSelections.length>1 ?this.formatDate(new Date(),"yyyy年MM月dd日hh时mm分ss秒")+'_入职信息表.xlsx':this.dataListSelections[0].realName+'_入职信息表.xlsx'))
+          aLink.setAttribute('download', row?row.realName+'.xlsx':(this.dataListSelections.length>1 ?this.formatDate(new Date(),"yyyy年MM月dd日hh时mm分ss秒")+'_入职信息表.zip':this.dataListSelections[0].realName+'_入职信息表.xlsx'))
         }else if(urlInterface == '/staffInfo/downloadHeadPic'){
-          aLink.setAttribute('download', row?row.realName+'.xlsx':(this.dataListSelections.length>1 ?this.formatDate(new Date(),"yyyy年MM月dd日hh时mm分ss秒")+'_员工头像表.xlsx':this.dataListSelections[0].realName+'_员工头像表.xlsx'))
+          aLink.setAttribute('download', row?row.realName+'.xlsx':(this.dataListSelections.length>1 ?this.formatDate(new Date(),"yyyy年MM月dd日hh时mm分ss秒")+'_员工头像表.zip':this.dataListSelections[0].realName+'_员工头像表.zip'))
         }
         document.body.appendChild(aLink)
         aLink.click()
