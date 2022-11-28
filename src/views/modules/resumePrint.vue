@@ -226,7 +226,7 @@ export default {
         // headerStyle: 'text-align:center;color:#f00;width:100%;border:1px #000 solid;',
         // targetStyles: ['border', 'padding: 15px'],
         scanStyles: false,
-        style: '.tb{border-collapse: collapse;margin-bottom: 20px;} .tb,.tb tr,.tb td{border: 1px solid #eaeef5;} .tb td{padding:5px;min-width:95px;max-width:130px;} .tb .tb-title{font-weight: 600;} .avatar{right:20px;width: 120px;height: 137px;} .bg-gray{background-color:#fafafa;-webkit-print-color-adjust: exact; } .acceptance{width:80px;text-align: center;}' // 表格样式
+        style: '.tb{border-collapse: collapse;margin-bottom: 20px;} .tb,.tb tr,.tb td{border: 1px solid #eaeef5;} .tb td{padding:4px;min-width:95px;max-width:130px;} .tb .tb-title{font-weight: 600;} .avatar{right:20px;width: 120px;height: 137px;} .bg-gray{background-color:#fafafa;-webkit-print-color-adjust: exact; } .acceptance{width:80px;text-align: center;}' // 表格样式
       })
     },
   }

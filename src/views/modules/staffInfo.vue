@@ -151,7 +151,7 @@
           fixed="right"
           header-align="center"
           align="center"
-          width="130"
+          min-width="150"
         >
           <template slot-scope="scope">
             <el-button

@@ -29,7 +29,8 @@ export default {
       dataListLoading: false,     // 数据列表，loading状态
       dataListSelections: [],     // 数据列表，多选项
       addOrUpdateVisible: false,   // 新增／更新，弹窗visible状态
-      dataList2: [],   
+      dataList2: [],  
+      dataListSelections3:[], 
     }
     /* eslint-enable */
   },
@@ -114,6 +115,7 @@ export default {
             limit: this.mixinViewModuleOptions.getDataListIsPage ? this.limit : null,
             ...this.dataForm,
             staffType:this.mixinViewModuleOptions.staffType==0?0:1,
+            source:this.mixinViewModuleOptions.source==1?1:2,
           }
         }
       ).then(({ data: res }) => {
@@ -131,7 +133,7 @@ export default {
     },
     // 单选
     singleSelectionChangeHandle (val) {
-      this.dataListSelections = val
+      this.dataListSelections3 = val
       if (val.length > 1) {
         this.$refs.tb.clearSelection();
         this.$refs.tb.toggleRowSelection(val.pop());

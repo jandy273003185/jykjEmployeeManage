@@ -6,15 +6,7 @@
           <el-input v-model="dataForm.realName" placeholder="姓名" clearable style=" width:140px"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-select clearable v-model="dataForm.inductionPlace" placeholder="入职地" style=" width:140px">
-            <el-option
-              v-for="item in entryArr"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            >
-            </el-option>
-          </el-select>
+          <ren-select v-model="dataForm.inductionPlace" dict-type="work_address" placeholder="入职地"></ren-select>
         </el-form-item>
         <el-form-item>
           <el-date-picker
@@ -112,15 +104,7 @@
           width="180"
         >
           <template slot-scope="scope">
-            <el-select clearable v-model="scope.row.corporation" placeholder="法人公司">
-              <el-option
-                v-for="item in corporationArr"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              >
-              </el-option>
-            </el-select>
+            <ren-select v-model="scope.row.corporation" dict-type="corporation" placeholder="法人公司"></ren-select>
           </template>
         </el-table-column>
         <el-table-column
@@ -131,15 +115,7 @@
           width="180"
         >
           <template slot-scope="scope">
-            <el-select clearable v-model="scope.row.inductionPlace" placeholder="入职地">
-              <el-option
-                v-for="item in entryArr"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              >
-              </el-option>
-            </el-select>
+            <ren-select v-model="scope.row.inductionPlace" dict-type="work_address" placeholder="入职地"></ren-select>
           </template>
         </el-table-column>
         <el-table-column
@@ -177,7 +153,7 @@
           align="center"
           width="180"
         >
-          <template slot-scope="scope">
+          <!-- <template slot-scope="scope">
             <el-input
               class="positionName"
               v-model="scope.row.costCenter"
@@ -185,6 +161,9 @@
               @click.native="positionNameClick(scope)"
               placeholder="成本中心"
             />
+          </template> -->
+          <template slot-scope="scope">
+            <span @click="positionNameClick(scope)" style="border:1px solid #DCDFE6;display: block;padding: 10px;width:160px;min-height:40px;border-radius:4px">{{scope.row.ccid?scope.row.ccid+'/'+scope.row.costCenter:''}}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -248,15 +227,7 @@
           width="150"
         >
           <template slot-scope="scope">
-            <el-select clearable v-model="scope.row.staffNature" placeholder="员工类型">
-              <el-option
-                v-for="item in employeeTypeArr"
-                :key="item"
-                :label="item"
-                :value="item"
-              >
-              </el-option>
-            </el-select>
+            <ren-select v-model="scope.row.staffNature" dict-type="staffNature_work" placeholder="员工类型"></ren-select>
           </template>
         </el-table-column>
         <el-table-column
@@ -267,15 +238,7 @@
           width="150"
         >
           <template slot-scope="scope">
-            <el-select clearable v-model="scope.row.recruitmentMethod" placeholder="招聘类型">
-              <el-option
-                v-for="item in recruitmentMethodArr"
-                :key="item"
-                :label="item"
-                :value="item"
-              >
-              </el-option>
-            </el-select>
+            <ren-select v-model="scope.row.recruitmentMethod" dict-type="recruitmentMethod_work" placeholder="招聘类型"></ren-select>
           </template>
         </el-table-column>
         <el-table-column
@@ -306,10 +269,7 @@
           width="130"
         >
           <template slot-scope="scope">
-            <el-select clearable v-model="scope.row.rank" placeholder="职工职级">
-              <el-option v-for="item in jobArr" :key="item" :label="item" :value="item">
-              </el-option>
-            </el-select>
+              <ren-select v-model="scope.row.rank" dict-type="rank_work" placeholder="职工职级"></ren-select>
           </template>
         </el-table-column>
         <el-table-column
@@ -382,18 +342,18 @@
                 prop="planName"
                 label="岗位"
               >
-                <template slot-scope="scope">{{scope.row.planName+'('+scope.row.planId+')'}}</template>
+                <template slot-scope="scope">{{scope.row.planId+'/'+scope.row.planName}}</template>
               </el-table-column>
               <el-table-column
                 v-else
                 prop="ccname"
                 label="成本中心"
               >
-                <template slot-scope="scope">{{scope.row.ccname+'('+scope.row.ccid+')'}}</template>
+                <template slot-scope="scope">{{scope.row.ccid+'/'+scope.row.ccname}}</template>
               </el-table-column>
             </el-table>
             <div v-if="title != '岗位编码'" style="color:red;margin:10px 0 -10px 0">如果选不到成本中心,可在以下栏位直接输入</div>
-            <div class="demo-input-suffix" v-if="title != '岗位编码' && !dataListSelections[0]">
+            <div class="demo-input-suffix" v-if="title != '岗位编码' && !dataListSelections3[0]">
                 编码： <el-input type="number" min="0" @blur="ccidBlur" oninput="if(value.length>10)value=value.slice(0,10)" onkeyup="value=value.replace(/[^\d]/g,'');" v-model="ccid" style="margin-top:20px;margin-right:24px;width:40%" />
                 名称： <el-input v-model="costCenter" style="margin-top:20px;width:40%"/>
             </div>
@@ -403,6 +363,19 @@
             <el-button @click="positionNameVisible = false">{{ $t('cancel') }}</el-button>
             <el-button type="primary" @click="positionConfirm()">{{ $t('confirm') }}</el-button>
           </template>
+      </el-dialog>
+      <el-dialog
+        title="以下数据导入失败"
+        :visible.sync="importVisible"
+        width="50%"
+        :modal="false"
+        :close-on-click-modal="false"
+        :close-on-press-escape="false"
+      >
+        {{importError}}
+        <template slot="footer">
+          <el-button type="primary"  @click="importVisible = false">{{ $t('confirm') }}</el-button>
+        </template>
       </el-dialog>
     </div>
   </el-card>
@@ -425,75 +398,6 @@ export default {
       },
       positionNameVisible: false,
       dataForm: {},
-      entryArr: [
-        { label: "0001/深圳", value: "0001/深圳" },
-        { label: "0002/东莞", value: "0002/东莞" },
-        { label: "0003/惠阳", value: "0003/惠阳" },
-        { label: "0004/苏州", value: "0004/苏州" },
-        { label: "0005/北京", value: "0005/北京" },
-        { label: "0006/香港", value: "0006/香港" },
-        { label: "0007/合肥", value: "0007/合肥" },
-        { label: "0008/成都", value: "0008/成都" },
-        { label: "0009/昆山", value: "0009/昆山" },
-        { label: "0010/上海", value: "0010/上海" },
-        { label: "0011/郑州", value: "0011/郑州" },
-      ],
-      corporationArr: [
-        { label: "1000/记忆科技(深圳)有限公司", value: "1000/记忆科技(深圳)有限公司" },
-        { label: "1100/记忆信息有限公司", value: "1100/记忆信息有限公司" },
-        {
-          label: "1200/东莞记忆存储科技有限公司",
-          value: "1200/东莞记忆存储科技有限公司",
-        },
-        {
-          label: "1300/苏州工业园区记忆科技有限公司",
-          value: "1300/苏州工业园区记忆科技有限公司",
-        },
-        {
-          label: "1400/记忆科技电子（惠州）公司",
-          value: "1400/记忆科技电子（惠州）公司",
-        },
-        {
-          label: "1500/北京记忆芯科科技有限公司",
-          value: "1500/北京记忆芯科科技有限公司",
-        },
-        {
-          label: "1600/深圳市科迪亚科技有限公司",
-          value: "1600/深圳市科迪亚科技有限公司",
-        },
-        {
-          label: "1700/深圳忆联信息系统有限公司",
-          value: "1700/深圳忆联信息系统有限公司",
-        },
-        {
-          label: "1800/北京联想核芯科技有限公司",
-          value: "1800/北京联想核芯科技有限公司",
-        },
-        {
-          label: "2100/东莞忆芯信息技术有限公司",
-          value: "2100/东莞忆芯信息技术有限公司",
-        },
-        {
-          label: "2200/东莞忆联信息系统有限公司",
-          value: "2200/东莞忆联信息系统有限公司",
-        },
-        {
-          label: "2300/苏州忆联信息系统有限公司",
-          value: "2300/苏州忆联信息系统有限公司",
-        },
-        {
-          label: "2400/深圳忆芯信息技术有限公司",
-          value: "2400/深圳忆芯信息技术有限公司",
-        },
-        {
-          label: "2500/郑州记忆存储科技有限公司",
-          value: "2500/郑州记忆存储科技有限公司",
-        },
-        {
-          label: "2600/深圳市云芯智联信息技术有限公司",
-          value: "2600/深圳市云芯智联信息技术有限公司",
-        },
-      ],
       deptArr: [],
       title: "岗位编码",
       potionNameProps: {
@@ -501,23 +405,23 @@ export default {
         label: "deptName",
       },
       row: 0,
-      jobArr: ["1级","2级","3级","4级","5级","6级","7级","8级","9级","10级", "R3", "R4", "R5",],
-      recruitmentMethodArr: [
-        "10/校园招聘",
-        "11/社会招聘",
-        "12/内部推荐",
-        "16/劳务派遣-浩鑫",
-        "18/劳务派遣-和仁",
-        "19/劳务派遣-佳鑫",
-        "21/劳务派遣-新起点",
-        "22/劳务派遣-德聚仁合",
-        "23/代理招聘-佳鑫",
-        "24/代理招聘-浩鑫",
-        "25/代理招聘-和仁",
-        "26/劳务派遣-华辉",
+      // jobArr: ["1级","2级","3级","4级","5级","6级","7级","8级","9级","10级", "R3", "R4", "R5",],
+      // recruitmentMethodArr: [
+      //   "10/校园招聘",
+      //   "11/社会招聘",
+      //   "12/内部推荐",
+      //   "16/劳务派遣-浩鑫",
+      //   "18/劳务派遣-和仁",
+      //   "19/劳务派遣-佳鑫",
+      //   "21/劳务派遣-新起点",
+      //   "22/劳务派遣-德聚仁合",
+      //   "23/代理招聘-佳鑫",
+      //   "24/代理招聘-浩鑫",
+      //   "25/代理招聘-和仁",
+      //   "26/劳务派遣-华辉",
         
-      ],
-      employeeTypeArr: ["1/正式合同工", "2/实习员工", "5/时薪制派遣工"],
+      // ],
+      // employeeTypeArr: ["1/正式合同工", "2/实习员工", "5/时薪制派遣工"],
       workPropertyArr: ["X/外派", "/非外派"],
       positionNameArr:[],
       positionNameArr2:[],
@@ -526,6 +430,9 @@ export default {
       internalReferrerArr:[],
       costCenter:'',
       ccid:'',
+      type:2,
+      importVisible:false,
+      importError:'',
     };
   },
   methods: {
@@ -557,39 +464,41 @@ export default {
       let _secondDeptId = null;
       let _thirdDeptId = null;
       if(this.title == '岗位编码'){
-        this.dataList[this.row].zzzh = this.dataListSelections[0].zzzh;
-        this.dataList[this.row].zzzl = this.dataListSelections[0].zzzl;
-        this.dataList[this.row].zzzrj = this.dataListSelections[0].zzzrj;
+        this.dataList[this.row].zzzh = this.dataListSelections3[0].zzzh;
+        this.dataList[this.row].zzzl = this.dataListSelections3[0].zzzl;
+        this.dataList[this.row].zzzrj = this.dataListSelections3[0].zzzrj;
+        this.dataList[this.row].deptId = this.dataListSelections3[0].deptId
+        this.dataList[this.row].deptName = this.dataListSelections3[0].deptName
         this.deptArr.map((first)=>{
           if(first.childrenDept.length > 0){
             first.childrenDept.map((second)=>{
-              if(second.deptId == this.dataListSelections[0].deptId){
+              if(second.deptId == this.dataListSelections3[0].deptId){
                 _firstDeptId = second.parentDeptId//一级组织
                 _secondDeptId = second.deptId//二级组织
               }
               if(second.childrenDept.length > 0){
                 second.childrenDept.map((third)=>{
                   if(third.childrenDept.length == 0){
-                    if(third.deptId == this.dataListSelections[0].deptId){
+                    if(third.deptId == this.dataListSelections3[0].deptId){
                       let thirdDeptId = third.deptId;
                       _secondDeptId = third.parentDeptId//二级组织
                       this.dataList[this.row].thirdDeptId = third.deptId
                       this.dataList[this.row].thirdDeptName = third.deptName//三级组织
-                      this.dataList[this.row].fourthDeptId = this.dataListSelections[0].planId
-                      this.dataList[this.row].fourthDeptName = this.dataListSelections[0].planName
+                      this.dataList[this.row].fourthDeptId = this.dataListSelections3[0].planId
+                      this.dataList[this.row].fourthDeptName = this.dataListSelections3[0].planName
                       third.childrenDept.map((four)=>{
-                        if(four.deptId == this.dataListSelections[0].deptId){
+                        if(four.deptId == this.dataListSelections3[0].deptId){
                           _thirdDeptId = thirdDeptId//三级组织
                           this.dataList[this.row].fourthDeptId = four.deptId
                           this.dataList[this.row].fourthDeptName = four.deptName//四级组织
-                            // this.dataList[this.row].deptId = this.dataListSelections[0].planId
-                            // this.dataList[this.row].deptName = this.dataListSelections[0].planName//五级组织
+                            // this.dataList[this.row].deptId = this.dataListSelections3[0].planId
+                            // this.dataList[this.row].deptName = this.dataListSelections3[0].planName//五级组织
                         }
                       })
                     }
                   }else{
                       third.childrenDept.map((four)=>{
-                        if(four.deptId == this.dataListSelections[0].deptId){
+                        if(four.deptId == this.dataListSelections3[0].deptId){
                           let thirdDeptId = four.parentDeptId;
                           _secondDeptId = third.parentDeptId//二级组织
                           this.dataList[this.row].thirdDeptId = third.deptId
@@ -603,8 +512,8 @@ export default {
                   }
                 })
               }else{
-                // this.dataList[this.row].thirdDeptId = this.dataListSelections[0].planId
-                // this.dataList[this.row].thirdDeptName = this.dataListSelections[0].planName//三级组织
+                // this.dataList[this.row].thirdDeptId = this.dataListSelections3[0].planId
+                // this.dataList[this.row].thirdDeptName = this.dataListSelections3[0].planName//三级组织
               }
             })
           }
@@ -629,12 +538,12 @@ export default {
           }
         })
 
-        this.dataList[this.row].organizationPostId = this.dataListSelections[0].planId;
-        this.dataList[this.row].organizationPostName = this.dataListSelections[0].planName;
+        this.dataList[this.row].organizationPostId = this.dataListSelections3[0].planId;
+        this.dataList[this.row].organizationPostName = this.dataListSelections3[0].planName;
       }else{
-        if(this.dataListSelections[0]){
-          this.dataList[this.row].ccid =  this.dataListSelections[0].ccid;
-          this.dataList[this.row].costCenter =  this.dataListSelections[0].ccname;
+        if(this.dataListSelections3[0]){
+          this.dataList[this.row].ccid =  this.dataListSelections3[0].ccid;
+          this.dataList[this.row].costCenter =  this.dataListSelections3[0].ccname;
         }else{
           if(this.ccid){
             if(!this.costCenter){
@@ -694,9 +603,20 @@ export default {
       }).catch(() => {})
     },
    
+    // returnPostChange(val){
+    //   if(val == 'X/是'){
+    //     this.type = 1
+    //   }else{
+    //     this.type = 2
+    //   }
+    // },
     getPosition(){
+      let params = {
+        data: new FormData(),
+      };
+      params.data.append("type",this.type);
       this.$http.post(
-        '/sapApi/getPostsTree'
+        '/sapApi/getPostsTree',params.data
       ).then(({ data: res }) => {
         if (res.code !== 0) {
             return this.$message.error(res.msg)
@@ -706,8 +626,12 @@ export default {
       }).catch(() => {})
     },
     getCostCenter(){
+      let params = {
+        data: new FormData(),
+      };
+      params.data.append("companyNum",(this.dataList[this.row].corporation).substring(0,(this.dataList[this.row].corporation).indexOf('/')));
       this.$http.post(
-        '/sapApi/getCostCenterTree'
+        '/sapApi/getCostCenterTree',params.data
       ).then(({ data: res }) => {
         if (res.code !== 0) {
             return this.$message.error(res.msg)
@@ -729,7 +653,9 @@ export default {
             this.$message.success('导入成功！')
             this.getDataList3()
         }else{
-          this.$message.error(res.data.msg)
+          // this.$message.error(res.data.msg)
+          this.importError = res.data.msg;
+          this.importVisible = true;
         }
       })
     },

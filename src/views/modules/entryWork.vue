@@ -6,29 +6,22 @@
           <el-input v-model="dataForm.realName" placeholder="姓名" clearable></el-input>
         </el-form-item>
         <el-form-item>
-          <el-select clearable v-model="dataForm.inductionPlace" placeholder="入职地">
-            <el-option
-              v-for="item in entryArr"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            >
-            </el-option>
-          </el-select>
+          <ren-select v-model="dataForm.inductionPlace" dict-type="work_address" placeholder="入职地"></ren-select>
         </el-form-item>
         <el-form-item>
           <el-date-picker
             v-model="dataForm.createTimeStart"
-            value-format="yyyy-MM-dd HH:mm:ss"
             type="date"
             placeholder="开始日期"
             style=" width:150px"
+            value-format="yyyy-MM-dd HH:mm:ss"
           >
           </el-date-picker>
         </el-form-item>
         <el-form-item>
           <el-date-picker
             value-format="yyyy-MM-dd HH:mm:ss"
+            v-model="dataForm.createTimeEnd"
             type="date"
             placeholder="结束日期"
             style=" width:150px"
@@ -71,8 +64,13 @@
           align="center"
           width="50"
         ></el-table-column>
-        <el-table-column prop="reportDate" label="拟入职日期" header-align="center" align="center" width="100"></el-table-column>
-        <el-table-column prop="realName" label="姓名" header-align="center" align="center" width="100"></el-table-column>
+        <el-table-column fixed prop="inductionStatus" label="入职状态" header-align="center" align="center" width="100">
+          <template slot-scope="scope">
+            {{scope.row.inductionStatus == 0?'待入职':(scope.row.inductionStatus == 1?'已入职':'放弃入职') }}
+          </template>
+        </el-table-column>
+        <el-table-column fixed prop="reportDate" label="拟入职日期" header-align="center" align="center" width="100"></el-table-column>
+        <el-table-column fixed prop="realName" label="姓名" header-align="center" align="center" width="100"></el-table-column>
         <el-table-column prop="corporation" label="法人公司" header-align="center" align="center" width="230"></el-table-column>
         <el-table-column prop="costCenter" label="成本中心" header-align="center" align="center" width="100"></el-table-column>
         <el-table-column prop="zzzl" label="职类" header-align="center" align="center" width="100"></el-table-column>
@@ -81,7 +79,7 @@
         <el-table-column prop="thirdDeptName" label="三级组织" header-align="center" align="center" width="130"></el-table-column>
         <el-table-column prop="fourthDeptName" label="四级组织" header-align="center" align="center" width="220"></el-table-column>
         <el-table-column prop="staffNature" label="员工类别" header-align="center" align="center" width="100"></el-table-column>
-        <el-table-column prop="realName" label="派遣公司" header-align="center" align="center" width="230"></el-table-column>
+        <el-table-column prop="recruitmentMethod" label="派遣公司" header-align="center" align="center" width="230"></el-table-column>
         <el-table-column prop="departInterviewer" label="部门面试人" header-align="center" align="center" width="100"></el-table-column>
         <el-table-column prop="organizationPostName" label="岗位" header-align="center" align="center" width="200"></el-table-column>
       </el-table>
@@ -129,20 +127,7 @@ export default {
         source:2,
       },
       positionNameVisible: false,
-      dataForm: {},
-      entryArr: [
-        { label: "0001/深圳", value: "0001/深圳" },
-        { label: "0002/东莞", value: "0002/东莞" },
-        { label: "0003/惠阳", value: "0003/惠阳" },
-        { label: "0004/苏州", value: "0004/苏州" },
-        { label: "0005/北京", value: "0005/北京" },
-        { label: "0006/香港", value: "0006/香港" },
-        { label: "0007/合肥", value: "0007/合肥" },
-        { label: "0008/成都", value: "0008/成都" },
-        { label: "0009/昆山", value: "0009/昆山" },
-        { label: "0010/上海", value: "0010/上海" },
-        { label: "0011/郑州", value: "0011/郑州" },
-      ],
+      dataForm: {inductionPlace:''},
       corporationArr: [
         { label: "1000/记忆科技(深圳)有限公司", value: "1000/记忆科技(深圳)有限公司" },
         { label: "1100/记忆信息有限公司", value: "1100/记忆信息有限公司" },

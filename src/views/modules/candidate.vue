@@ -6,7 +6,7 @@
           <el-input class="inputW" v-model="dataForm.realName" placeholder="姓名" clearable></el-input>
         </el-form-item>
         <el-form-item>
-          <el-select clearable class="inputW" v-model="dataForm.inductionPlace" placeholder="入职地">
+          <!-- <el-select clearable class="inputW" v-model="dataForm.inductionPlace" placeholder="入职地">
             <el-option
               v-for="item in entryArr"
               :key="item.value"
@@ -14,7 +14,8 @@
               :value="item.value"
             >
             </el-option>
-          </el-select>
+          </el-select> -->
+          <ren-select v-model="dataForm.inductionPlace" dict-type="work_address" placeholder="入职地"></ren-select>
         </el-form-item>
         <el-form-item>
           <!-- <el-date-picker
@@ -135,6 +136,7 @@
           header-align="center"
           align="center"
           width="120"
+          fixed
         ></el-table-column>
         <el-table-column prop="inductionStatus" label="入职状态" header-align="center" align="center"
           ><template slot-scope="scope">
@@ -152,6 +154,7 @@
           header-align="center"
           align="center"
           width="180"
+          fixed
         >
           <template slot-scope="scope">
             <el-date-picker
@@ -170,6 +173,7 @@
           header-align="center"
           align="center"
           width="100"
+          fixed
         ></el-table-column>
         <el-table-column prop="gender" label="性别" header-align="center" align="center"
           ><template slot-scope="scope">
@@ -184,7 +188,7 @@
           width="180"
         >
           <template slot-scope="scope">
-            <el-select clearable v-model="scope.row.inductionPlace" placeholder="入职地">
+            <!-- <el-select clearable v-model="scope.row.inductionPlace" placeholder="入职地">
               <el-option
                 v-for="item in entryArr"
                 :key="item.value"
@@ -192,7 +196,8 @@
                 :value="item.value"
               >
               </el-option>
-            </el-select>
+            </el-select> -->
+            <ren-select v-model="scope.row.inductionPlace" dict-type="work_address" placeholder="入职地"></ren-select>
           </template>
         </el-table-column>
         <el-table-column
@@ -203,7 +208,7 @@
           width="180"
         >
           <template slot-scope="scope">
-            <el-select clearable v-model="scope.row.corporation" placeholder="法人公司">
+            <!-- <el-select clearable v-model="scope.row.corporation" placeholder="法人公司">
               <el-option
                 v-for="item in corporationArr"
                 :key="item.value"
@@ -211,7 +216,8 @@
                 :value="item.value"
               >
               </el-option>
-            </el-select>
+            </el-select> -->
+            <ren-select v-model="scope.row.corporation" dict-type="corporation" placeholder="法人公司"></ren-select>
           </template>
         </el-table-column>
         <el-table-column
@@ -219,12 +225,12 @@
           label="是否离职补岗"
           header-align="center"
           align="center"
-          width="180"
+          width="126"
         >
           <template slot-scope="scope">
-            <el-select clearable v-model="scope.row.returnPost" placeholder="是否离职补岗">
-              <el-option value="" label="否"></el-option>
-              <el-option value="X" label="是"></el-option>
+            <el-select v-model="scope.row.returnPost" placeholder="是否离职补岗" @change="returnPostChange(scope)">
+              <el-option value="/否" label="/否"></el-option>
+              <el-option value="X/是" label="X/是"></el-option>
             </el-select>
           </template>
         </el-table-column>
@@ -264,10 +270,11 @@
           width="130"
         >
           <template slot-scope="scope">
-            <el-select clearable v-model="scope.row.rank" placeholder="个人职级">
+            <!-- <el-select clearable v-model="scope.row.rank" placeholder="个人职级">
               <el-option v-for="item in jobArr" :key="item" :label="item" :value="item">
               </el-option>
-            </el-select>
+            </el-select> -->
+            <ren-select v-model="scope.row.rank" dict-type="rank" placeholder="个人职级"></ren-select>
           </template>
         </el-table-column>
         <el-table-column
@@ -278,7 +285,7 @@
           width="130"
         >
           <template slot-scope="scope">
-            <el-select clearable
+            <!-- <el-select 
               v-model="scope.row.contractPeriod"
               placeholder="合同期限"
             >
@@ -289,7 +296,8 @@
                 :value="item"
               >
               </el-option>
-            </el-select>
+            </el-select> -->
+            <ren-select v-model="scope.row.contractPeriod" dict-type="contractPeriod" placeholder="合同期限"></ren-select>
           </template>
         </el-table-column>
         <el-table-column
@@ -300,7 +308,7 @@
           width="120"
         >
           <template slot-scope="scope">
-            <el-select clearable v-model="scope.row.probationPeriod" placeholder="试用期">
+            <!-- <el-select v-model="scope.row.probationPeriod" placeholder="试用期">
               <el-option
                 v-for="item in probationArr"
                 :key="item"
@@ -308,7 +316,8 @@
                 :value="item"
               >
               </el-option>
-            </el-select>
+            </el-select> -->
+            <ren-select v-model="scope.row.probationPeriod" dict-type="probationPeriod" placeholder="试用期"></ren-select>
           </template>
         </el-table-column>
         <el-table-column
@@ -319,7 +328,7 @@
           width="166"
         >
           <template slot-scope="scope">
-            <el-select clearable
+            <!-- <el-select clearable
               multiple
               v-model="scope.row.laborContractWorkplace"
               placeholder="劳动合同工作地"
@@ -331,7 +340,8 @@
                 :value="item.value"
               >
               </el-option>
-            </el-select>
+            </el-select> -->
+            <ren-select :multiple="true" v-model="scope.row.laborContractWorkplace" dict-type="work_address" placeholder="劳动合同工作地"></ren-select>
           </template>
         </el-table-column>
         <el-table-column
@@ -342,7 +352,7 @@
           width="160"
         >
           <template slot-scope="scope">
-            <el-select clearable v-model="scope.row.actualWorkingPlace" placeholder="实际工作地">
+            <!-- <el-select clearable v-model="scope.row.actualWorkingPlace" placeholder="实际工作地">
               <el-option
                 v-for="item in entryArr"
                 :key="item.value"
@@ -350,7 +360,8 @@
                 :value="item.value"
               >
               </el-option>
-            </el-select>
+            </el-select> -->
+            <ren-select v-model="scope.row.actualWorkingPlace" dict-type="work_address" placeholder="实际工作地"></ren-select>
           </template>
         </el-table-column>
         <el-table-column
@@ -361,13 +372,14 @@
           width="180"
         >
           <template slot-scope="scope">
-            <el-input
+            <!-- <el-input
+              v-show="false"
               class="positionName"
-              v-model="scope.row.costCenter"
               readonly
               @click.native="positionNameClick(scope)"
               placeholder="成本中心"
-            />
+            /> -->
+            <span @click="positionNameClick(scope)" style="border:1px solid #DCDFE6;display: block;padding: 10px;width:160px;min-height:40px;border-radius:4px">{{scope.row.ccid?scope.row.ccid+'/'+scope.row.costCenter:''}}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -392,15 +404,7 @@
           width="150"
         >
           <template slot-scope="scope">
-            <el-select clearable v-model="scope.row.recruitmentMethod" placeholder="招聘类型">
-              <el-option
-                v-for="item in recruitmentMethodArr"
-                :key="item"
-                :label="item"
-                :value="item"
-              >
-              </el-option>
-            </el-select>
+            <ren-select v-model="scope.row.recruitmentMethod" dict-type="recruitmentMethod" placeholder="招聘类型"></ren-select>
           </template>
         </el-table-column>
         <el-table-column
@@ -430,15 +434,7 @@
           width="150"
         >
           <template slot-scope="scope">
-            <el-select clearable v-model="scope.row.staffNature" placeholder="员工类型">
-              <el-option
-                v-for="item in employeeTypeArr"
-                :key="item"
-                :label="item"
-                :value="item"
-              >
-              </el-option>
-            </el-select>
+            <ren-select v-model="scope.row.staffNature" dict-type="staffNature" placeholder="员工类型"></ren-select>
           </template>
         </el-table-column>
         <el-table-column
@@ -465,20 +461,28 @@
           fixed="right"
           header-align="center"
           align="center"
-          width="208"
+          width="228"
         >
+        <!-- :http-request="uploadFile" -->
           <template slot-scope="scope">
             <div style="display:flex">
               <el-upload
-                action="" 
+                action="#" 
                 :multiple="true"
-                :http-request="uploadFile"
+                ref="upload"
+                :on-change="handleChange"
+                :on-exceed="handleExceed"
                 :data="{infoId:scope.row.infoId}"
+                :limit="5"
+                :http-request="uploadFile"
+                :auto-upload="true"
+                :file-list="fileList"
                 :show-file-list="false">
-                <el-button  type="primary" >上传附件</el-button>
+                <el-button  type="primary" style="width:95px" >上传附件</el-button>
               </el-upload>
-              <el-button v-if="scope.row.enclosurePath" :title="scope.row.enclosurePath" style="margin-left:10px;width:80px;padding:0 10px;overflow:hidden;" type="primary" size="small"  @click="downHandle(scope.row.enclosurePath)"
-                >{{scope.row.enclosurePath}}</el-button>
+              <!-- <el-button  type="primary" style="width:95px" @click="uploadFile(scope.row.infoId)">确定</el-button> -->
+              <el-button v-if="scope.row.enclosurePath" :title="scope.row.enclosurePath" style="margin-left:10px;width:130px;overflow:hidden;" type="primary" @click="downHandle(scope.row.enclosurePath)"
+                >下载附件</el-button>
             </div>
           </template>
         </el-table-column>
@@ -534,18 +538,18 @@
                 prop="planName"
                 label="岗位"
               >
-                <template slot-scope="scope">{{scope.row.planName+'('+scope.row.planId+')'}}</template>
+                <template slot-scope="scope">{{scope.row.planId+'/'+scope.row.planName}}</template>
               </el-table-column>
               <el-table-column
                 v-else
                 prop="ccname"
                 label="成本中心"
               >
-                <template slot-scope="scope">{{scope.row.ccname+'('+scope.row.ccid+')'}}</template>
+                <template slot-scope="scope">{{scope.row.ccid+'/'+scope.row.ccname}}</template>
               </el-table-column>
             </el-table>
             <div v-if="title != '编制岗位名称'" style="color:red;margin:10px 0 -10px 0">如果选不到成本中心,可在以下栏位直接输入</div>
-            <div class="demo-input-suffix" v-if="title != '编制岗位名称' && !dataListSelections[0]">
+            <div class="demo-input-suffix" v-if="title != '编制岗位名称' && !dataListSelections3[0]">
                 编码： <el-input type="number" min="0" @blur="ccidBlur" oninput="if(value.length>10)value=value.slice(0,10)" onkeyup="value=value.replace(/[^\d]/g,'');" v-model="ccid" style="margin-top:20px;margin-right:24px;width:40%" />
                 名称： <el-input v-model="costCenter" style="margin-top:20px;width:40%"/>
             </div>
@@ -567,7 +571,7 @@
         <el-table
           :data="downFileArr"
           border
-          @selection-change="dataListSelectionChangeHandle"
+          @selection-change="dataListSelectionChangeHandle2"
           ref="tb"
         >
           <el-table-column
@@ -605,76 +609,76 @@ export default {
         source:1,
       },
       positionNameVisible: false,
-      dataForm: {},
-      entryArr: [
-        { label: "0001/深圳", value: "0001/深圳" },
-        { label: "0002/东莞", value: "0002/东莞" },
-        { label: "0003/惠阳", value: "0003/惠阳" },
-        { label: "0004/苏州", value: "0004/苏州" },
-        { label: "0005/北京", value: "0005/北京" },
-        { label: "0006/香港", value: "0006/香港" },
-        { label: "0007/合肥", value: "0007/合肥" },
-        { label: "0008/成都", value: "0008/成都" },
-        { label: "0009/昆山", value: "0009/昆山" },
-        { label: "0010/上海", value: "0010/上海" },
-        { label: "0011/郑州", value: "0011/郑州" },
-      ],
-      corporationArr: [
-        { label: "1000/记忆科技(深圳)有限公司", value: "1000/记忆科技(深圳)有限公司" },
-        { label: "1100/记忆信息有限公司", value: "1100/记忆信息有限公司" },
-        {
-          label: "1200/东莞记忆存储科技有限公司",
-          value: "1200/东莞记忆存储科技有限公司",
-        },
-        {
-          label: "1300/苏州工业园区记忆科技有限公司",
-          value: "1300/苏州工业园区记忆科技有限公司",
-        },
-        {
-          label: "1400/记忆科技电子（惠州）公司",
-          value: "1400/记忆科技电子（惠州）公司",
-        },
-        {
-          label: "1500/北京记忆芯科科技有限公司",
-          value: "1500/北京记忆芯科科技有限公司",
-        },
-        {
-          label: "1600/深圳市科迪亚科技有限公司",
-          value: "1600/深圳市科迪亚科技有限公司",
-        },
-        {
-          label: "1700/深圳忆联信息系统有限公司",
-          value: "1700/深圳忆联信息系统有限公司",
-        },
-        {
-          label: "1800/北京联想核芯科技有限公司",
-          value: "1800/北京联想核芯科技有限公司",
-        },
-        {
-          label: "2100/东莞忆芯信息技术有限公司",
-          value: "2100/东莞忆芯信息技术有限公司",
-        },
-        {
-          label: "2200/东莞忆联信息系统有限公司",
-          value: "2200/东莞忆联信息系统有限公司",
-        },
-        {
-          label: "2300/苏州忆联信息系统有限公司",
-          value: "2300/苏州忆联信息系统有限公司",
-        },
-        {
-          label: "2400/深圳忆芯信息技术有限公司",
-          value: "2400/深圳忆芯信息技术有限公司",
-        },
-        {
-          label: "2500/郑州记忆存储科技有限公司",
-          value: "2500/郑州记忆存储科技有限公司",
-        },
-        {
-          label: "2600/深圳市云芯智联信息技术有限公司",
-          value: "2600/深圳市云芯智联信息技术有限公司",
-        },
-      ],
+      dataForm: {inductionPlace:''},
+      // entryArr: [
+      //   { label: "0001/深圳", value: "0001/深圳" },
+      //   { label: "0002/东莞", value: "0002/东莞" },
+      //   { label: "0003/惠阳", value: "0003/惠阳" },
+      //   { label: "0004/苏州", value: "0004/苏州" },
+      //   { label: "0005/北京", value: "0005/北京" },
+      //   { label: "0006/香港", value: "0006/香港" },
+      //   { label: "0007/合肥", value: "0007/合肥" },
+      //   { label: "0008/成都", value: "0008/成都" },
+      //   { label: "0009/昆山", value: "0009/昆山" },
+      //   { label: "0010/上海", value: "0010/上海" },
+      //   { label: "0011/郑州", value: "0011/郑州" },
+      // ],
+      // corporationArr: [
+      //   { label: "1000/记忆科技(深圳)有限公司", value: "1000/记忆科技(深圳)有限公司" },
+      //   { label: "1100/记忆信息有限公司", value: "1100/记忆信息有限公司" },
+      //   {
+      //     label: "1200/东莞记忆存储科技有限公司",
+      //     value: "1200/东莞记忆存储科技有限公司",
+      //   },
+      //   {
+      //     label: "1300/苏州工业园区记忆科技有限公司",
+      //     value: "1300/苏州工业园区记忆科技有限公司",
+      //   },
+      //   {
+      //     label: "1400/记忆科技电子（惠州）公司",
+      //     value: "1400/记忆科技电子（惠州）公司",
+      //   },
+      //   {
+      //     label: "1500/北京记忆芯科科技有限公司",
+      //     value: "1500/北京记忆芯科科技有限公司",
+      //   },
+      //   {
+      //     label: "1600/深圳市科迪亚科技有限公司",
+      //     value: "1600/深圳市科迪亚科技有限公司",
+      //   },
+      //   {
+      //     label: "1700/深圳忆联信息系统有限公司",
+      //     value: "1700/深圳忆联信息系统有限公司",
+      //   },
+      //   {
+      //     label: "1800/北京联想核芯科技有限公司",
+      //     value: "1800/北京联想核芯科技有限公司",
+      //   },
+      //   {
+      //     label: "2100/东莞忆芯信息技术有限公司",
+      //     value: "2100/东莞忆芯信息技术有限公司",
+      //   },
+      //   {
+      //     label: "2200/东莞忆联信息系统有限公司",
+      //     value: "2200/东莞忆联信息系统有限公司",
+      //   },
+      //   {
+      //     label: "2300/苏州忆联信息系统有限公司",
+      //     value: "2300/苏州忆联信息系统有限公司",
+      //   },
+      //   {
+      //     label: "2400/深圳忆芯信息技术有限公司",
+      //     value: "2400/深圳忆芯信息技术有限公司",
+      //   },
+      //   {
+      //     label: "2500/郑州记忆存储科技有限公司",
+      //     value: "2500/郑州记忆存储科技有限公司",
+      //   },
+      //   {
+      //     label: "2600/深圳市云芯智联信息技术有限公司",
+      //     value: "2600/深圳市云芯智联信息技术有限公司",
+      //   },
+      // ],
       deptArr: [],
       title: "编制岗位名称",
       potionNameProps: {
@@ -682,22 +686,22 @@ export default {
         label: "deptName",
       },
       row: 0,
-      jobArr: ["R1", "R2", "R3", "R4", "R5", "R6", "R7", "R8", "R9", "R10", "R11"],
-      contractPeriodArr: ["3个月", "6个月", "1年", "2年", "3年", "4年"],
+      // jobArr: ["R1", "R2", "R3", "R4", "R5", "R6", "R7", "R8", "R9", "R10", "R11"],
+      // contractPeriodArr: ["3个月", "6个月", "1年", "2年", "3年", "4年"],
       value3: "4年",
       value4: "3",
-      probationArr: [0, 1, 2, 3, 4, 5, 6],
-      recruitmentMethodArr: [
-        "10/校园招聘",
-        "11/社会招聘",
-        "12/内部推荐",
-        "13/猎头推荐",
-        "14/劳务代招",
-        "30/业务调整",
-        "99/其他",
-        "RH/离职回聘",
-      ],
-      employeeTypeArr: ["1/正式合同工", "2/实习员工", "3/劳务派遣工"],
+      // probationArr: [0, 1, 2, 3, 4, 5, 6],
+      // recruitmentMethodArr: [
+      //   "10/校园招聘",
+      //   "11/社会招聘",
+      //   "12/内部推荐",
+      //   "13/猎头推荐",
+      //   "14/劳务代招",
+      //   "30/业务调整",
+      //   "99/其他",
+      //   "RH/离职回聘",
+      // ],
+      // employeeTypeArr: ["1/正式合同工", "2/实习员工", "3/劳务派遣工"],
       workPropertyArr: ["X/外派", "/非外派"],
       positionNameArr:[],
       positionNameArr2:[],
@@ -708,6 +712,10 @@ export default {
       ccid:'',
       downVisible:false,
       downFileArr:[],
+      type:2,
+      dataListSelections2: [],     // 数据列表，多选项
+      fileList:[],
+      oldFileList:[],
     };
   },
   methods: {
@@ -741,39 +749,41 @@ export default {
       let _secondDeptId = null;
       let _thirdDeptId = null;
       if(this.title == '编制岗位名称'){
-        this.dataList[this.row].zzzh = this.dataListSelections[0].zzzh;
-        this.dataList[this.row].zzzl = this.dataListSelections[0].zzzl;
-        this.dataList[this.row].zzzrj = this.dataListSelections[0].zzzrj;
+        this.dataList[this.row].zzzh = this.dataListSelections3[0].zzzh;
+        this.dataList[this.row].zzzl = this.dataListSelections3[0].zzzl;
+        this.dataList[this.row].zzzrj = this.dataListSelections3[0].zzzrj;
+        this.dataList[this.row].deptId = this.dataListSelections3[0].deptId
+        this.dataList[this.row].deptName = this.dataListSelections3[0].deptName
         this.deptArr.map((first)=>{
           if(first.childrenDept.length > 0){
             first.childrenDept.map((second)=>{
-              if(second.deptId == this.dataListSelections[0].deptId){
+              if(second.deptId == this.dataListSelections3[0].deptId){
                 _firstDeptId = second.parentDeptId//一级组织
                 _secondDeptId = second.deptId//二级组织
               }
               if(second.childrenDept.length > 0){
                 second.childrenDept.map((third)=>{
                   if(third.childrenDept.length == 0){
-                    if(third.deptId == this.dataListSelections[0].deptId){
+                    if(third.deptId == this.dataListSelections3[0].deptId){
                       let thirdDeptId = third.deptId;
                       _secondDeptId = third.parentDeptId//二级组织
                       this.dataList[this.row].thirdDeptId = third.deptId
                       this.dataList[this.row].thirdDeptName = third.deptName//三级组织
-                      this.dataList[this.row].fourthDeptId = this.dataListSelections[0].planId
-                      this.dataList[this.row].fourthDeptName = this.dataListSelections[0].planName
+                      this.dataList[this.row].fourthDeptId = this.dataListSelections3[0].planId
+                      this.dataList[this.row].fourthDeptName = this.dataListSelections3[0].planName
                       third.childrenDept.map((four)=>{
-                        if(four.deptId == this.dataListSelections[0].deptId){
+                        if(four.deptId == this.dataListSelections3[0].deptId){
                           _thirdDeptId = thirdDeptId//三级组织
                           this.dataList[this.row].fourthDeptId = four.deptId
                           this.dataList[this.row].fourthDeptName = four.deptName//四级组织
-                            // this.dataList[this.row].deptId = this.dataListSelections[0].planId
-                            // this.dataList[this.row].deptName = this.dataListSelections[0].planName//五级组织
+                            // this.dataList[this.row].deptId = this.dataListSelections3[0].planId
+                            // this.dataList[this.row].deptName = this.dataListSelections3[0].planName//五级组织
                         }
                       })
                     }
                   }else{
                       third.childrenDept.map((four)=>{
-                        if(four.deptId == this.dataListSelections[0].deptId){
+                        if(four.deptId == this.dataListSelections3[0].deptId){
                           let thirdDeptId = four.parentDeptId;
                           _secondDeptId = third.parentDeptId//二级组织
                           this.dataList[this.row].thirdDeptId = third.deptId
@@ -787,8 +797,8 @@ export default {
                   }
                 })
               }else{
-                // this.dataList[this.row].thirdDeptId = this.dataListSelections[0].planId
-                // this.dataList[this.row].thirdDeptName = this.dataListSelections[0].planName//三级组织
+                // this.dataList[this.row].thirdDeptId = this.dataListSelections3[0].planId
+                // this.dataList[this.row].thirdDeptName = this.dataListSelections3[0].planName//三级组织
               }
             })
           }
@@ -813,12 +823,12 @@ export default {
           }
         })
 
-        this.dataList[this.row].organizationPostId = this.dataListSelections[0].planId;
-        this.dataList[this.row].organizationPostName = this.dataListSelections[0].planName;
+        this.dataList[this.row].organizationPostId = this.dataListSelections3[0].planId;
+        this.dataList[this.row].organizationPostName = this.dataListSelections3[0].planName;
       }else{
-        if(this.dataListSelections[0]){
-          this.dataList[this.row].ccid =  this.dataListSelections[0].ccid;
-          this.dataList[this.row].costCenter =  this.dataListSelections[0].ccname;
+        if(this.dataListSelections3[0]){
+          this.dataList[this.row].ccid =  this.dataListSelections3[0].ccid;
+          this.dataList[this.row].costCenter =  this.dataListSelections3[0].ccname;
         }else{
           if(this.ccid){
             if(!this.costCenter){
@@ -833,7 +843,10 @@ export default {
       this.positionNameVisible = false;
       // console.log(this.dataList[this.row]);
     },
-    
+    // 多选
+    dataListSelectionChangeHandle2 (val) {
+      this.dataListSelections2 = val
+    },
     saveHandle(){
       if (this.dataListSelections.length <= 0) {
         return this.$message({
@@ -902,9 +915,21 @@ export default {
           })
       }).catch(() => {})
     },
+    returnPostChange(obj){
+      if(obj.row.returnPost == 'X/是'){
+        this.type = 1
+      }else{
+        this.type = 2
+      }
+      this.dataList[obj.$index].organizationPostName = ''
+    },
     getPosition(){
+      let params = {
+        data: new FormData(),
+      };
+      params.data.append("type",this.type);
       this.$http.post(
-        '/sapApi/getPostsTree'
+        '/sapApi/getPostsTree',params.data
       ).then(({ data: res }) => {
         if (res.code !== 0) {
             return this.$message.error(res.msg)
@@ -914,8 +939,12 @@ export default {
       }).catch(() => {})
     },
     getCostCenter(){
+      let params = {
+        data: new FormData(),
+      };
+      params.data.append("companyNum",(this.dataList[this.row].corporation).substring(0,(this.dataList[this.row].corporation).indexOf('/')));
       this.$http.post(
-        '/sapApi/getCostCenterTree'
+        '/sapApi/getCostCenterTree',params.data
       ).then(({ data: res }) => {
         if (res.code !== 0) {
             return this.$message.error(res.msg)
@@ -945,22 +974,60 @@ export default {
       if (!value) return true;
       return data.deptName.indexOf(value) !== -1;
     },
-    uploadFile(param){
-      let params = {
-        data: new FormData(),
-      };
-      params.data.append("file",param.file);
-      params.data.append("infoId",param.data.infoId);
-      // params.data.append("fileName",encodeURI(param.file.name));
-      this.$http.post('/staffInfoDetail/uploadEnclosure',params.data)
-        .then(res => {
-        if(res.data.code=="0"){
-            this.$message.success('上传成功！')
-            this.getDataList3()
-        }else{
-          this.$message.error(res.data.msg)
+    handleExceed(files, fileList) {
+        this.$message.warning(`当前限制选择5个文件，本次选择了 ${files.length} 个文件`);
+      },
+    handleChange(file,fileList){// 文件状态改变钩子
+      // 第一次on-change获取fileList
+      if (this.fileCount === 0){
+        // 多个文件fileList会变化
+        this.oldFileList = Object.assign(this.fileList);
+      }
+      // file.raw // 文件内容
+      // 改文件是否已经存在上传列表中  some判断是否满足要求
+      let isTrue = this.oldFileList.some((f)=>{
+        return f.name === file.name})
+      if (isTrue){
+        this.$message.warning("请勿重复上传文件！")
+        fileList.pop()
+        return
+      }
+      this.fileList = fileList
+      this.fileCount++;
+    },
+    debounce(fn,t){
+      const delay = t || 200;
+      let timer;
+      return function(){
+        const args = arguments
+        if(timer){
+          clearTimeout(timer)
         }
+        timer = setTimeout(()=>{
+          timer = null;
+          fn.apply(this,args)
+        },delay);
+      }
+    },
+    
+    uploadFile(param){
+      let formData = new FormData();
+      this.fileList.forEach(item =>{
+        formData.append("file",item.raw)
+        // arr.push(item.raw)
       })
+      // formData.append("file",param.file);
+      formData.append("infoId",param.data.infoId);
+      // formData.append("infoId",param);
+      this.$http.post('/staffInfoDetail/uploadEnclosure',formData)
+          .then(res => {
+          if(res.data.code=="0"){
+              this.$message.success('上传成功！')
+              this.getDataList3()
+          }else{
+            this.$message.error(res.data.msg)
+          }
+        })
     },
     positionInput(val){
       this.positionNameArr = this.positionNameArr2
@@ -1018,17 +1085,24 @@ export default {
       this.downVisible = true;
     },
     downFileConfirm(){
+      if (this.dataListSelections2.length <= 0) {
+        return this.$message({
+          message: '请选择下载项',
+          type: 'warning',
+          duration: 1000
+        })
+      }
       let params = {
         data: new FormData(),
       };
-      params.data.append("fileNames",this.dataListSelections);
+      params.data.append("fileNames",this.dataListSelections2);
       this.$http.post('/staffInfoDetail/downloadEnclosure',params.data,{ responseType: 'blob' })
         .then(({ data: res }) => {
           const url = window.URL.createObjectURL(new Blob([res]))
           const aLink = document.createElement('a')
           aLink.style.display = 'none'
           aLink.href = url
-          aLink.setAttribute('download', this.dataListSelections.length > 1?this.formatDate(new Date(),"yyyy年MM月dd日hh时mm分ss秒")+'_附件.zip':this.dataListSelections[0]+'.zip')
+          aLink.setAttribute('download', this.dataListSelections2.length > 1?this.formatDate(new Date(),"yyyy年MM月dd日hh时mm分ss秒")+'_附件.zip':this.dataListSelections2[0]+'.zip')
           document.body.appendChild(aLink)
           aLink.click()
           document.body.removeChild(aLink)
@@ -1037,22 +1111,25 @@ export default {
       })
     },
   },
-  mounted(){
-    setTimeout(()=>{
-      this.dataList.map((item)=>{
-        this.$nextTick(()=>{
-          item.contractPeriod = '4年'
-          item.probationPeriod = '3'
-          item.returnPost = ''
-        })
-      }) 
-    },3000)
+  created(){
     this.getInternalReferrer()
   },
   watch: {
     deptFilter(val) {
       this.$refs.tree.filter(val);
-    }
+    },
+    dataList: {
+　　　　handler(newValue, oldValue) {
+　　　　　　this.dataList.map((item)=>{
+            this.$nextTick(()=>{
+              if(!item.contractPeriod){item.contractPeriod = '4年'}
+              if(!item.probationPeriod){item.probationPeriod = '3'}
+              if(item.returnPost == 'X/是'){item.returnPost = 'X/是'}else{item.returnPost = '/否'}
+            })
+          }) 
+　　　　},
+　　　　deep: true
+　　}
   },
 }
 </script>
@@ -1062,5 +1139,11 @@ export default {
 }
 .inputW{
   width:150px;
+}
+.enclosure>>>span{
+  display:block;
+  width:50px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 </style>

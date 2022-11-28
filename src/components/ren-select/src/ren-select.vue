@@ -1,5 +1,5 @@
 <template>
-    <el-select :value="value+''" @input="$emit('input', $event)" :placeholder="placeholder" clearable>
+    <el-select :multiple="multiple" :value="value" @input="$emit('input', $event)" :placeholder="placeholder" clearable>
         <el-option :label="data.dictLabel" v-for="data in dataList" :key="data.dictValue" :value ="data.dictValue">{{data.dictLabel}}</el-option>
     </el-select>
 </template>
@@ -13,9 +13,10 @@ export default {
     }
   },
   props: {
-    value: [Number, String],
+    value: [Number, String,Array],
     dictType: String,
-    placeholder: String
+    placeholder: String,
+    multiple: true,
   }
 }
 </script>
