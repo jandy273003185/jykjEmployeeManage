@@ -474,11 +474,10 @@
                 :on-exceed="handleExceed"
                 :data="{infoId:scope.row.infoId}"
                 :limit="5"
-                :http-request="uploadFile"
-                :auto-upload="true"
+                :auto-upload="false"
                 :file-list="fileList"
                 :show-file-list="false">
-                <el-button  type="primary" style="width:95px" >上传附件</el-button>
+                <el-button  type="primary" style="width:95px" @click="uploadBtn(scope.row.infoId)">上传附件</el-button>
               </el-upload>
               <!-- <el-button  type="primary" style="width:95px" @click="uploadFile(scope.row.infoId)">确定</el-button> -->
               <el-button v-if="scope.row.enclosurePath" :title="scope.row.enclosurePath" style="margin-left:10px;width:130px;overflow:hidden;" type="primary" @click="downHandle(scope.row.enclosurePath)"
@@ -716,6 +715,9 @@ export default {
       dataListSelections2: [],     // 数据列表，多选项
       fileList:[],
       oldFileList:[],
+      fileCount:0,
+      infoId:'',
+      flag:false,
     };
   },
   methods: {
@@ -975,7 +977,7 @@ export default {
       return data.deptName.indexOf(value) !== -1;
     },
     handleExceed(files, fileList) {
-        this.$message.warning(`当前限制选择5个文件，本次选择了 ${files.length} 个文件`);
+        this.$message.warning(`当前限制最多5个文件，本次选择了 ${files.length} 个文件`);
       },
     handleChange(file,fileList){// 文件状态改变钩子
       // 第一次on-change获取fileList
@@ -994,34 +996,30 @@ export default {
       }
       this.fileList = fileList
       this.fileCount++;
-    },
-    debounce(fn,t){
-      const delay = t || 200;
-      let timer;
-      return function(){
-        const args = arguments
-        if(timer){
-          clearTimeout(timer)
+      this.flag = true;
+      setTimeout(()=>{
+        if(this.flag){
+          this.uploadFile();
         }
-        timer = setTimeout(()=>{
-          timer = null;
-          fn.apply(this,args)
-        },delay);
-      }
+      },1000)
     },
-    
-    uploadFile(param){
+    uploadBtn(infoId){
+      this.infoId = infoId;
+    },
+    uploadFile(){
+      this.flag = false;
       let formData = new FormData();
       this.fileList.forEach(item =>{
         formData.append("file",item.raw)
-        // arr.push(item.raw)
       })
       // formData.append("file",param.file);
-      formData.append("infoId",param.data.infoId);
-      // formData.append("infoId",param);
+      formData.append("infoId",this.infoId);
+      this.dataListLoading = true
       this.$http.post('/staffInfoDetail/uploadEnclosure',formData)
           .then(res => {
+          this.dataListLoading = false
           if(res.data.code=="0"){
+              this.fileList = [];
               this.$message.success('上传成功！')
               this.getDataList3()
           }else{
